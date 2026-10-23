@@ -13,3 +13,11 @@ memory.md
 memory.md
 !README.md
 */.env
+
+mediflow_agent.py
+mediflow_schemas.py
+oci_storage.py
+PLANO_PROJETO_MEDIFLOW_HACKATHON.md
+app.py
+requirements.txt
+setup_github_kanban.sh
