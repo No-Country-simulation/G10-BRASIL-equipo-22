@@ -1,23 +1,33 @@
 # Virtual Environments & Credentials
-# Virtual Environments & Credentials
 *.venv
 */.venv
 *.env
 */.env
 
-# Project Internal Memory & Plan Documents (Keep README.md tracked)
+# Project Internal Memory, Plans & Testing Docs (Keep README.md tracked)
 memory.md
+test.md
+PLANO_PROJETO_MEDIFLOW_HACKATHON.md
 !README.md
 
-# Project Internal Memory & Plan Documents (Keep README.md tracked)
-memory.md
-!README.md
-*/.env
-
+# Application & Implementation Files
 mediflow_agent.py
 mediflow_schemas.py
 oci_storage.py
-PLANO_PROJETO_MEDIFLOW_HACKATHON.md
 app.py
 requirements.txt
+setup_github_kanban.sh
+
+# Local Storage Cache & Python Artifacts
+oci_bucket_local/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+
+# Local Storage Cache & Python Artifacts
+oci_bucket_local/
+__pycache__/
+*.pyc
+.pytest_cache/
 setup_github_kanban.sh
