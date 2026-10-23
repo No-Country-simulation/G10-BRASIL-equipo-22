@@ -1,4 +1,15 @@
+# Virtual Environments & Credentials
+# Virtual Environments & Credentials
 *.venv
 */.venv
 *.env
+*/.env
+
+# Project Internal Memory & Plan Documents (Keep README.md tracked)
+memory.md
+!README.md
+
+# Project Internal Memory & Plan Documents (Keep README.md tracked)
+memory.md
+!README.md
 */.env
