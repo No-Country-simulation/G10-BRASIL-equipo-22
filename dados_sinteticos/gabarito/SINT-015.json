@@ -1,0 +1,48 @@
+{
+  "documento_id": "SINT-015",
+  "classificacao": {
+    "tipo_documento": "Laudo de Exame de Imagem",
+    "especialidade": "Radiologia",
+    "nivel_prioridade": "Urgente"
+  },
+  "dados_extraidos": {
+    "paciente": {
+      "nome": "Thiago Martins Ribeiro",
+      "idade": 22
+    },
+    "medico_solicitante": {
+      "nome": "Dr. Otávio Sampaio Reis",
+      "crm": "45120-PR"
+    },
+    "exame_realizado": "Radiografia de tórax AP no leito",
+    "exames_solicitados": [],
+    "diagnostico_principal": "Pneumotórax hipertensivo à direita",
+    "cid_sugerido": "J93.0",
+    "medicamentos": []
+  },
+  "decisao_roteamento": {
+    "destino_principal": "Fila_Emergencia_Medica",
+    "requer_auditoria_humana": false,
+    "notificacao_gerada": {
+      "canal": "Alerta_Plantao_Medico"
+    }
+  },
+  "_avaliacao": {
+    "cenario": "urgencia",
+    "formato": "pdf_digital",
+    "degradacao": "nenhuma",
+    "arquivo": "documentos/SINT-015.pdf",
+    "tipo_arquivo": "PDF",
+    "canal_origem": "Pronto_Socorro",
+    "motivo": "Pneumotórax hipertensivo: emergência imediata.",
+    "armadilha": null,
+    "cid_aceitos": [
+      "J93.0",
+      "J93.1",
+      "J93.9"
+    ],
+    "campos_ausentes": [],
+    "decisao_pendente": null,
+    "transcricao": "Hospital Aurora do Vale - Serviço de Radiologia\nRua Brigadeiro Franco, 3100 - Curitiba/PR - Tel. (41) 3000-0100\n\nLAUDO DE RADIOGRAFIA\n\nPaciente: Thiago Martins Ribeiro\nIdade: 22 anos\nAtendimento: 2026-PS-08821\nSolicitante: Dr. Otávio Sampaio Reis - CRM-PR 45120\nData do exame: 18/10/2026\n\nRADIOGRAFIA DE TÓRAX (AP, NO LEITO)\nIndicação clínica: dor torácica súbita à direita e falta de ar.\n\nACHADOS\nPneumotórax volumoso à direita, com colapso quase completo do pulmão direito, desvio do mediastino para a esquerda e rebaixamento da cúpula diafragmática direita.\n\nIMPRESSÃO DIAGNÓSTICA\nPneumotórax hipertensivo à direita.\nAchado crítico comunicado ao médico assistente às 11h15.\n\nDra. Luísa Fontana Ribeiro\nRadiologia e Diagnóstico por Imagem - CRM-PR 27309\n\nDOCUMENTO FICTÍCIO - dados sintéticos para teste do MediFlow (Equipo 22). Sem validade clínica.\n"
+  }
+}

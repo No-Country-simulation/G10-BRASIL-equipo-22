@@ -1,0 +1,48 @@
+{
+  "documento_id": "SINT-012",
+  "classificacao": {
+    "tipo_documento": "Laudo de Exame de Imagem",
+    "especialidade": "Radiologia / Neurologia",
+    "nivel_prioridade": "Urgente"
+  },
+  "dados_extraidos": {
+    "paciente": {
+      "nome": "Sebastião Rodrigues Filho",
+      "idade": 74
+    },
+    "medico_solicitante": {
+      "nome": "Dr. Gustavo Antunes Pacheco",
+      "crm": "47302-PR"
+    },
+    "exame_realizado": "Tomografia computadorizada de crânio sem contraste",
+    "exames_solicitados": [],
+    "diagnostico_principal": "Hemorragia intraparenquimatosa aguda",
+    "cid_sugerido": "I61.0",
+    "medicamentos": []
+  },
+  "decisao_roteamento": {
+    "destino_principal": "Fila_Emergencia_Medica",
+    "requer_auditoria_humana": false,
+    "notificacao_gerada": {
+      "canal": "Alerta_Plantao_Medico"
+    }
+  },
+  "_avaliacao": {
+    "cenario": "urgencia",
+    "formato": "pdf_digital",
+    "degradacao": "nenhuma",
+    "arquivo": "documentos/SINT-012.pdf",
+    "tipo_arquivo": "PDF",
+    "canal_origem": "Pronto_Socorro",
+    "motivo": "AVC hemorrágico com desvio da linha média: achado crítico.",
+    "armadilha": null,
+    "cid_aceitos": [
+      "I61.0",
+      "I61.9",
+      "I61"
+    ],
+    "campos_ausentes": [],
+    "decisao_pendente": null,
+    "transcricao": "Hospital Aurora do Vale - Serviço de Radiologia\nRua Brigadeiro Franco, 3100 - Curitiba/PR - Tel. (41) 3000-0100\n\nLAUDO DE TOMOGRAFIA COMPUTADORIZADA\n\nPaciente: Sebastião Rodrigues Filho\nIdade: 74 anos\nAtendimento: 2026-PS-08802\nSolicitante: Dr. Gustavo Antunes Pacheco - CRM-PR 47302\nData do exame: 16/10/2026\n\nTOMOGRAFIA COMPUTADORIZADA DE CRÂNIO SEM CONTRASTE\nIndicação clínica: rebaixamento do nível de consciência e fraqueza no lado esquerdo do corpo, de início súbito há cerca de 2 horas.\n\nACHADOS\nHematoma intraparenquimatoso na região nucleocapsular direita, medindo cerca de 4,1 x 3,2 cm (volume estimado de 26 mL), com edema ao redor e efeito de massa, determinando desvio da linha média de 6 mm para a esquerda. Sem sinais de inundação ventricular. Demais estruturas sem alterações agudas.\n\nIMPRESSÃO DIAGNÓSTICA\nHemorragia intraparenquimatosa aguda nucleocapsular direita, com efeito de massa.\nAchado crítico comunicado à equipe do pronto-socorro às 22h05.\n\nDra. Luísa Fontana Ribeiro\nRadiologia e Diagnóstico por Imagem - CRM-PR 27309\n\nDOCUMENTO FICTÍCIO - dados sintéticos para teste do MediFlow (Equipo 22). Sem validade clínica.\n"
+  }
+}

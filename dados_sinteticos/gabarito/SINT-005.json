@@ -1,0 +1,45 @@
+{
+  "documento_id": "SINT-005",
+  "classificacao": {
+    "tipo_documento": "Laudo de Exame de Imagem",
+    "especialidade": "Radiologia",
+    "nivel_prioridade": "Rotina"
+  },
+  "dados_extraidos": {
+    "paciente": {
+      "nome": "Gabriel Henrique Lopes",
+      "idade": 29
+    },
+    "medico_solicitante": {
+      "nome": "Dr. Fábio Teixeira Guimarães",
+      "crm": "29874-PR"
+    },
+    "exame_realizado": "Radiografia de tórax PA e perfil",
+    "exames_solicitados": [],
+    "diagnostico_principal": null,
+    "cid_sugerido": null,
+    "medicamentos": []
+  },
+  "decisao_roteamento": {
+    "destino_principal": "Prontuario_Eletronico",
+    "requer_auditoria_humana": false,
+    "notificacao_gerada": null
+  },
+  "_avaliacao": {
+    "cenario": "rotina",
+    "formato": "texto",
+    "degradacao": "nenhuma",
+    "arquivo": "documentos/SINT-005.json",
+    "tipo_arquivo": "TEXTO",
+    "canal_origem": "Ambulatorio",
+    "motivo": "Exame normal, completo e identificado.",
+    "armadilha": null,
+    "cid_aceitos": [
+      null,
+      "R05"
+    ],
+    "campos_ausentes": [],
+    "decisao_pendente": null,
+    "transcricao": "Centro de Diagnóstico por Imagem Serra Verde\nRua XV de Novembro, 2100 - Curitiba/PR\n\nLAUDO DE RADIOGRAFIA\n\nPaciente: Gabriel Henrique Lopes\nIdade: 29 anos\nSolicitante: Dr. Fábio Teixeira Guimarães - CRM-PR 29874\nData do exame: 10/10/2026\n\nRADIOGRAFIA DE TÓRAX (PA E PERFIL)\nIndicação clínica: tosse seca há 10 dias, sem febre.\n\nACHADOS\nCampos pulmonares sem opacidades. Seios costofrênicos livres. Área cardíaca dentro dos limites da normalidade. Mediastino centrado. Estruturas ósseas preservadas.\n\nCONCLUSÃO\nRadiografia de tórax sem alterações.\n\nDra. Luísa Fontana Ribeiro\nRadiologia e Diagnóstico por Imagem - CRM-PR 27309\n\nDOCUMENTO FICTÍCIO - dados sintéticos para teste do MediFlow (Equipo 22). Sem validade clínica.\n"
+  }
+}

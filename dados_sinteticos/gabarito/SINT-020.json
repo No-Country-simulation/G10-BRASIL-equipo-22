@@ -1,0 +1,57 @@
+{
+  "documento_id": "SINT-020",
+  "classificacao": {
+    "tipo_documento": "Receituário Médico",
+    "especialidade": "Ortopedia",
+    "nivel_prioridade": "Rotina"
+  },
+  "dados_extraidos": {
+    "paciente": {
+      "nome": "Lucas Gabriel Teodoro",
+      "idade": 19
+    },
+    "medico_solicitante": {
+      "nome": "Dr. Henrique Bastos Lemos",
+      "crm": "162443-SP"
+    },
+    "exame_realizado": null,
+    "exames_solicitados": [],
+    "diagnostico_principal": "Lombalgia aguda",
+    "cid_sugerido": "M54.5",
+    "medicamentos": [
+      {
+        "nome": "Paracetamol",
+        "dosagem": "750 mg",
+        "via": "oral",
+        "posologia": "2 comprimidos de 4 em 4 horas, se dor"
+      },
+      {
+        "nome": "Cloridrato de ciclobenzaprina",
+        "dosagem": "5 mg",
+        "via": "oral",
+        "posologia": "1 comprimido à noite por 5 dias"
+      }
+    ]
+  },
+  "decisao_roteamento": {
+    "destino_principal": "Fila_Revisao_Humana",
+    "requer_auditoria_humana": true,
+    "notificacao_gerada": null
+  },
+  "_avaliacao": {
+    "cenario": "ambiguo",
+    "formato": "texto",
+    "degradacao": "nenhuma",
+    "arquivo": "documentos/SINT-020.json",
+    "tipo_arquivo": "TEXTO",
+    "canal_origem": "Ambulatorio",
+    "motivo": "2 comprimidos de 750 mg a cada 4 horas somam até 9 g por dia, mais que o dobro do máximo de 4 g para adultos.",
+    "armadilha": null,
+    "cid_aceitos": [
+      "M54.5"
+    ],
+    "campos_ausentes": [],
+    "decisao_pendente": null,
+    "transcricao": "Clínica Ortopédica Movimento\nRua Vergueiro, 2400 - São Paulo/SP\n\nRECEITUÁRIO\n\nPaciente: Lucas Gabriel Teodoro\nIdade: 19 anos\nData: 21/10/2026\n\nUSO ORAL\n1. Paracetamol 750 mg - 36 comprimidos\n   Tomar 2 comprimidos de 4 em 4 horas, se dor.\n2. Cloridrato de ciclobenzaprina 5 mg - 5 comprimidos\n   Tomar 1 comprimido à noite por 5 dias.\nDiagnóstico: lombalgia aguda (CID-10 M54.5).\n\nSão Paulo, 21 de outubro de 2026\nDr. Henrique Bastos Lemos\nOrtopedia e Traumatologia - CRM-SP 162443\n\nDOCUMENTO FICTÍCIO - dados sintéticos para teste do MediFlow (Equipo 22). Sem validade clínica.\n"
+  }
+}

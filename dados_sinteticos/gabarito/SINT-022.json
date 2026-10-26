@@ -1,0 +1,49 @@
+{
+  "documento_id": "SINT-022",
+  "classificacao": {
+    "tipo_documento": "Guia de Solicitação de Procedimento",
+    "especialidade": "Gastroenterologia",
+    "nivel_prioridade": "Rotina"
+  },
+  "dados_extraidos": {
+    "paciente": {
+      "nome": "Rodrigo Almeida Kühn",
+      "idade": null
+    },
+    "medico_solicitante": {
+      "nome": "Dr. Leonardo Vieira Campos",
+      "crm": null
+    },
+    "exame_realizado": null,
+    "exames_solicitados": [
+      "Colonoscopia com biópsia"
+    ],
+    "diagnostico_principal": null,
+    "cid_sugerido": null,
+    "medicamentos": []
+  },
+  "decisao_roteamento": {
+    "destino_principal": "Fila_Revisao_Humana",
+    "requer_auditoria_humana": true,
+    "notificacao_gerada": null
+  },
+  "_avaliacao": {
+    "cenario": "ambiguo",
+    "formato": "pdf_escaneado",
+    "degradacao": "scan_pesado",
+    "arquivo": "documentos/SINT-022.pdf",
+    "tipo_arquivo": "PDF",
+    "canal_origem": "Central_Autorizacoes",
+    "motivo": "Guia sem número do CRM e sem indicação clínica: a auditoria não tem como avaliar o pedido.",
+    "armadilha": null,
+    "cid_aceitos": [
+      null
+    ],
+    "campos_ausentes": [
+      "medico_solicitante.crm",
+      "indicação clínica"
+    ],
+    "decisao_pendente": null,
+    "transcricao": "SAÚDE INTEGRAL PLANOS\nGUIA DE SERVIÇO PROFISSIONAL / SERVIÇO AUXILIAR DE DIAGNÓSTICO E TERAPIA - SP/SADT\nRegistro ANS: 419999\nNº da guia no prestador: 2026-0009377\n\nDADOS DO BENEFICIÁRIO\nNúmero da carteira: 0 8812 027716 15 4\nNome: Rodrigo Almeida Kühn\n\nDADOS DO SOLICITANTE\nNome do contratado: Centro de Endoscopia Digestiva Alto Paraná\nNome do profissional solicitante: Dr. Leonardo Vieira Campos\nConselho profissional: CRM\nNúmero no conselho:\nUF: PR\nCódigo CBO: 225165\n\nDADOS DA SOLICITAÇÃO\nCaráter do atendimento: 1 - Eletiva\nData da solicitação: 22/10/2026\nIndicação clínica:\n\nPROCEDIMENTOS SOLICITADOS\nTabela | Código | Descrição | Qtde. solicitada\n22 | 99000981 | Colonoscopia com biópsia | 1\n\nDOCUMENTO FICTÍCIO - dados sintéticos para teste do MediFlow (Equipo 22). Sem validade clínica.\n"
+  }
+}

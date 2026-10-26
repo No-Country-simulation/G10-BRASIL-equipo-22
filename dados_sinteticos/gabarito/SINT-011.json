@@ -1,0 +1,47 @@
+{
+  "documento_id": "SINT-011",
+  "classificacao": {
+    "tipo_documento": "Laudo de Exame de Imagem",
+    "especialidade": "Radiologia / Pneumologia",
+    "nivel_prioridade": "Urgente"
+  },
+  "dados_extraidos": {
+    "paciente": {
+      "nome": "Larissa Prado Mendonça",
+      "idade": 41
+    },
+    "medico_solicitante": {
+      "nome": "Dr. Otávio Sampaio Reis",
+      "crm": "45120-PR"
+    },
+    "exame_realizado": "Angiotomografia de tórax",
+    "exames_solicitados": [],
+    "diagnostico_principal": "Tromboembolismo pulmonar agudo bilateral",
+    "cid_sugerido": "I26.0",
+    "medicamentos": []
+  },
+  "decisao_roteamento": {
+    "destino_principal": "Fila_Emergencia_Medica",
+    "requer_auditoria_humana": false,
+    "notificacao_gerada": {
+      "canal": "Alerta_Plantao_Medico"
+    }
+  },
+  "_avaliacao": {
+    "cenario": "urgencia",
+    "formato": "texto",
+    "degradacao": "nenhuma",
+    "arquivo": "documentos/SINT-011.json",
+    "tipo_arquivo": "TEXTO",
+    "canal_origem": "Pronto_Socorro",
+    "motivo": "TEP agudo com sobrecarga de ventrículo direito: achado crítico.",
+    "armadilha": "A médica que assina é a radiologista; o solicitante é o Dr. Otávio.",
+    "cid_aceitos": [
+      "I26.0",
+      "I26.9"
+    ],
+    "campos_ausentes": [],
+    "decisao_pendente": null,
+    "transcricao": "Hospital Aurora do Vale - Serviço de Radiologia\nRua Brigadeiro Franco, 3100 - Curitiba/PR - Tel. (41) 3000-0100\n\nLAUDO DE TOMOGRAFIA COMPUTADORIZADA\n\nPaciente: Larissa Prado Mendonça\nIdade: 41 anos\nAtendimento: 2026-PS-08790\nSolicitante: Dr. Otávio Sampaio Reis - CRM-PR 45120\nData do exame: 15/10/2026\n\nANGIOTOMOGRAFIA DE TÓRAX (PROTOCOLO PARA TROMBOEMBOLISMO PULMONAR)\nIndicação clínica: dispneia súbita e dor torácica ventilatório-dependente; pós-operatório de colecistectomia há 10 dias.\n\nACHADOS\nFalhas de enchimento nas artérias pulmonares lobares inferiores bilaterais e em ramos segmentares do lobo médio. Relação entre os diâmetros dos ventrículos direito e esquerdo de 1,2, sugestiva de sobrecarga das câmaras direitas. Pequeno derrame pleural à direita.\n\nIMPRESSÃO DIAGNÓSTICA\nTromboembolismo pulmonar agudo bilateral, com sinais de sobrecarga ventricular direita.\nResultado crítico comunicado ao médico assistente às 14h20.\n\nDra. Luísa Fontana Ribeiro\nRadiologia e Diagnóstico por Imagem - CRM-PR 27309\n\nDOCUMENTO FICTÍCIO - dados sintéticos para teste do MediFlow (Equipo 22). Sem validade clínica.\n"
+  }
+}

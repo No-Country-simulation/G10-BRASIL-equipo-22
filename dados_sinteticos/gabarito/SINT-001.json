@@ -1,0 +1,64 @@
+{
+  "documento_id": "SINT-001",
+  "classificacao": {
+    "tipo_documento": "Receituário Médico",
+    "especialidade": "Cardiologia",
+    "nivel_prioridade": "Rotina"
+  },
+  "dados_extraidos": {
+    "paciente": {
+      "nome": "José Aparecido Ramos",
+      "idade": 63
+    },
+    "medico_solicitante": {
+      "nome": "Dr. Rafael Nogueira Prado",
+      "crm": "41577-PR"
+    },
+    "exame_realizado": null,
+    "exames_solicitados": [],
+    "diagnostico_principal": null,
+    "cid_sugerido": null,
+    "medicamentos": [
+      {
+        "nome": "Losartana potássica",
+        "dosagem": "50 mg",
+        "via": "oral",
+        "posologia": "1 comprimido de 12 em 12 horas"
+      },
+      {
+        "nome": "Hidroclorotiazida",
+        "dosagem": "25 mg",
+        "via": "oral",
+        "posologia": "1 comprimido pela manhã"
+      },
+      {
+        "nome": "Besilato de anlodipino",
+        "dosagem": "5 mg",
+        "via": "oral",
+        "posologia": "1 comprimido ao dia"
+      }
+    ]
+  },
+  "decisao_roteamento": {
+    "destino_principal": "Farmacia_Hospitalar",
+    "requer_auditoria_humana": false,
+    "notificacao_gerada": null
+  },
+  "_avaliacao": {
+    "cenario": "rotina",
+    "formato": "pdf_digital",
+    "degradacao": "nenhuma",
+    "arquivo": "documentos/SINT-001.pdf",
+    "tipo_arquivo": "PDF",
+    "canal_origem": "Ambulatorio",
+    "motivo": "Receita legível e completa, doses habituais, paciente e CRM identificados.",
+    "armadilha": null,
+    "cid_aceitos": [
+      null,
+      "I10"
+    ],
+    "campos_ausentes": [],
+    "decisao_pendente": null,
+    "transcricao": "Clínica Médica Horizonte\nRua das Acácias, 1200 - Curitiba/PR - Tel. (41) 3000-0000\n\nRECEITUÁRIO\n\nPaciente: José Aparecido Ramos\nIdade: 63 anos\nData: 05/10/2026\n\nUSO ORAL - USO CONTÍNUO\n1. Losartana potássica 50 mg - 60 comprimidos\n   Tomar 1 comprimido de 12 em 12 horas.\n2. Hidroclorotiazida 25 mg - 30 comprimidos\n   Tomar 1 comprimido pela manhã.\n3. Besilato de anlodipino 5 mg - 30 comprimidos\n   Tomar 1 comprimido ao dia.\n\nCuritiba, 5 de outubro de 2026\nDr. Rafael Nogueira Prado\nCardiologia - CRM-PR 41577\n\nDOCUMENTO FICTÍCIO - dados sintéticos para teste do MediFlow (Equipo 22). Sem validade clínica.\n"
+  }
+}

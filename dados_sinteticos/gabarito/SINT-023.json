@@ -1,0 +1,59 @@
+{
+  "documento_id": "SINT-023",
+  "classificacao": {
+    "tipo_documento": "Relatório de Alta",
+    "especialidade": "Ortopedia",
+    "nivel_prioridade": "Rotina"
+  },
+  "dados_extraidos": {
+    "paciente": {
+      "nome": "Vera Lúcia Moraes",
+      "idade": null
+    },
+    "medico_solicitante": {
+      "nome": "Dr. Mauro Kenji Watanabe",
+      "crm": "39981-PR"
+    },
+    "exame_realizado": null,
+    "exames_solicitados": [],
+    "diagnostico_principal": "Fratura do colo do fêmur esquerdo",
+    "cid_sugerido": "S72.0",
+    "medicamentos": [
+      {
+        "nome": "Enoxaparina sódica",
+        "dosagem": "40 mg",
+        "via": "subcutânea",
+        "posologia": "1 seringa uma vez ao dia por 30 dias"
+      },
+      {
+        "nome": "Paracetamol",
+        "dosagem": "750 mg",
+        "via": "oral",
+        "posologia": "1 comprimido de 6 em 6 horas, se dor"
+      }
+    ]
+  },
+  "decisao_roteamento": {
+    "destino_principal": "Fila_Revisao_Humana",
+    "requer_auditoria_humana": true,
+    "notificacao_gerada": null
+  },
+  "_avaliacao": {
+    "cenario": "ambiguo",
+    "formato": "pdf_escaneado",
+    "degradacao": "scan_leve",
+    "arquivo": "documentos/SINT-023.pdf",
+    "tipo_arquivo": "PDF",
+    "canal_origem": "Internacao",
+    "motivo": "Idade do cabeçalho (39) não bate com a data de nascimento nem com o texto (74 anos): pode ser documento de outra paciente.",
+    "armadilha": "Um extrator que pega o primeiro campo 'Idade' devolve 39 sem perceber o conflito.",
+    "cid_aceitos": [
+      "S72.0"
+    ],
+    "campos_ausentes": [
+      "paciente.idade (conflito: 39 no cabeçalho; 74 no texto e na data de nascimento)"
+    ],
+    "decisao_pendente": null,
+    "transcricao": "Hospital Aurora do Vale\nRua Brigadeiro Franco, 3100 - Curitiba/PR - Tel. (41) 3000-0100\n\nRELATÓRIO DE ALTA HOSPITALAR\n\nPaciente: Vera Lúcia Moraes\nIdade: 39 anos\nData de nascimento: 12/03/1952\nProntuário: 0051877\nUnidade: Ortopedia - 5º andar\nInternação: 02/10/2026\nAlta: 09/10/2026\n\nDIAGNÓSTICO PRINCIPAL\nFratura do colo do fêmur esquerdo (CID-10 S72.0).\n\nRESUMO DA INTERNAÇÃO\nPaciente de 74 anos, admitida após queda da própria altura em casa, com dor e incapacidade de apoiar o membro inferior esquerdo. Radiografia confirmou fratura do colo do fêmur. Submetida a artroplastia parcial do quadril esquerdo em 03/10/2026, sem intercorrências.\n\nCONDIÇÕES DE ALTA\nAlta em bom estado geral, deambulando com andador e auxílio.\n\nPRESCRIÇÃO DE ALTA\n1. Enoxaparina sódica 40 mg - 30 seringas\n   Aplicar 1 seringa por via subcutânea, uma vez ao dia, por 30 dias.\n2. Paracetamol 750 mg - 20 comprimidos\n   Tomar 1 comprimido de 6 em 6 horas, se dor.\n\nORIENTAÇÕES\nRetorno ao ambulatório de ortopedia em 14 dias para retirada dos pontos. Fisioterapia motora conforme orientação.\n\nCuritiba, 9 de outubro de 2026\nDr. Mauro Kenji Watanabe\nOrtopedia e Traumatologia - CRM-PR 39981\n\nDOCUMENTO FICTÍCIO - dados sintéticos para teste do MediFlow (Equipo 22). Sem validade clínica.\n"
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "documento_id": "SINT-008",
+  "classificacao": {
+    "tipo_documento": "Atestado Médico",
+    "especialidade": "Clínica Médica",
+    "nivel_prioridade": "Rotina"
+  },
+  "dados_extraidos": {
+    "paciente": {
+      "nome": "Juliana Santos Moreira",
+      "idade": null
+    },
+    "medico_solicitante": {
+      "nome": "Dra. Marina Albuquerque Teles",
+      "crm": "38214-PR"
+    },
+    "exame_realizado": null,
+    "exames_solicitados": [],
+    "diagnostico_principal": "Influenza (gripe)",
+    "cid_sugerido": "J11",
+    "medicamentos": [],
+    "dias_afastamento": 3
+  },
+  "decisao_roteamento": {
+    "destino_principal": "Prontuario_Eletronico",
+    "requer_auditoria_humana": false,
+    "notificacao_gerada": null
+  },
+  "_avaliacao": {
+    "cenario": "rotina",
+    "formato": "imagem",
+    "degradacao": "foto",
+    "arquivo": "documentos/SINT-008.jpg",
+    "tipo_arquivo": "IMAGEM",
+    "canal_origem": "Ambulatorio",
+    "motivo": "Atestado completo, fotografado com celular.",
+    "armadilha": null,
+    "cid_aceitos": [
+      "J11",
+      "J11.1",
+      "J11.8"
+    ],
+    "campos_ausentes": [],
+    "decisao_pendente": null,
+    "transcricao": "Policlínica Monte Claro\nRua Chile, 1500 - Curitiba/PR\n\nATESTADO MÉDICO\n\nAtesto, para os devidos fins, que a Sra. Juliana Santos Moreira esteve sob meus cuidados profissionais nesta data e necessita de 3 (três) dias de afastamento de suas atividades laborais, a partir de 13/10/2026, por motivo de doença.\nCID-10: J11 (informado com autorização da paciente).\n\nCuritiba, 13 de outubro de 2026\nDra. Marina Albuquerque Teles\nClínica Médica - CRM-PR 38214\n\nDOCUMENTO FICTÍCIO - dados sintéticos para teste do MediFlow (Equipo 22). Sem validade clínica.\n"
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "documento_id": "SINT-019",
+  "classificacao": {
+    "tipo_documento": "Receituário Médico",
+    "especialidade": "Reumatologia",
+    "nivel_prioridade": "Rotina"
+  },
+  "dados_extraidos": {
+    "paciente": {
+      "nome": "Neusa Terezinha Becker",
+      "idade": 64
+    },
+    "medico_solicitante": {
+      "nome": "Dra. Beatriz Lacerda Fonseca",
+      "crm": "36752-PR"
+    },
+    "exame_realizado": null,
+    "exames_solicitados": [],
+    "diagnostico_principal": "Artrite reumatoide",
+    "cid_sugerido": "M06.9",
+    "medicamentos": [
+      {
+        "nome": "Metotrexato",
+        "dosagem": "2,5 mg",
+        "via": "oral",
+        "posologia": "4 comprimidos (10 mg) por dia"
+      },
+      {
+        "nome": "Ácido fólico",
+        "dosagem": "5 mg",
+        "via": "oral",
+        "posologia": "1 comprimido uma vez por semana"
+      },
+      {
+        "nome": "Prednisona",
+        "dosagem": "5 mg",
+        "via": "oral",
+        "posologia": "1 comprimido pela manhã"
+      }
+    ]
+  },
+  "decisao_roteamento": {
+    "destino_principal": "Fila_Revisao_Humana",
+    "requer_auditoria_humana": true,
+    "notificacao_gerada": null
+  },
+  "_avaliacao": {
+    "cenario": "ambiguo",
+    "formato": "pdf_digital",
+    "degradacao": "nenhuma",
+    "arquivo": "documentos/SINT-019.pdf",
+    "tipo_arquivo": "PDF",
+    "canal_origem": "Ambulatorio",
+    "motivo": "Metotrexato em dose diária: na artrite reumatoide o uso é semanal, e a dose diária pode ser fatal. Prescrição de alto risco, precisa de revisão antes de dispensar.",
+    "armadilha": "Documento legível e completo: o problema é clínico, não de leitura.",
+    "cid_aceitos": [
+      "M06.9",
+      "M06"
+    ],
+    "campos_ausentes": [],
+    "decisao_pendente": null,
+    "transcricao": "Dra. Beatriz Lacerda Fonseca - Reumatologia\nRua Visconde de Guarapuava, 3000, sala 5 - Curitiba/PR\n\nRECEITUÁRIO\n\nPaciente: Neusa Terezinha Becker\nIdade: 64 anos\nData: 20/10/2026\n\nUSO ORAL\n1. Metotrexato 2,5 mg - 60 comprimidos\n   Tomar 4 comprimidos (10 mg) por dia.\n2. Ácido fólico 5 mg - 4 comprimidos\n   Tomar 1 comprimido uma vez por semana, no dia seguinte ao metotrexato.\n3. Prednisona 5 mg - 30 comprimidos\n   Tomar 1 comprimido pela manhã.\nDiagnóstico: artrite reumatoide (CID-10 M06.9).\n\nCuritiba, 20 de outubro de 2026\nDra. Beatriz Lacerda Fonseca\nReumatologia - CRM-PR 36752\n\nDOCUMENTO FICTÍCIO - dados sintéticos para teste do MediFlow (Equipo 22). Sem validade clínica.\n"
+  }
+}
