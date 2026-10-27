@@ -24,16 +24,16 @@ app.py
 requirements.txt
 setup_github_kanban.sh
 
-# Local Storage Cache & Python Artifacts
-oci_bucket_local/
-__pycache__/
-*.pyc
-.pytest_cache/
-
 
 # Local Storage Cache & Python Artifacts
 oci_bucket_local/
+**/oci_bucket_local/
 __pycache__/
+**/__pycache__/
 *.pyc
+*.db
+*.sqlite
+*.sqlite3
 .pytest_cache/
-setup_github_kanban.sh
+*/week3
+week3
