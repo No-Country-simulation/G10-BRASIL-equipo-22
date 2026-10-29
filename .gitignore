@@ -1,39 +1,35 @@
-# Virtual Environments & Credentials
-*.venv
-*/.venv
+# ==============================================================================
+# MediFlow (Equipo 22) — Arquivos Sensíveis, de Ambiente e Caches Locais
+# ==============================================================================
+
+# 1. Credenciais, Chaves de API e Variáveis de Ambiente Privadas (STRICTLY PRIVATE)
 *.env
 */.env
+.env
+.env.*
+*.key
+*.pem
 
-# Project Internal Memory, Plans & Testing Docs (Keep README.md tracked)
-memory.md
-test.md
-melhorias.md
-desafios.md
-PLANO_PROJETO_MEDIFLOW_HACKATHON.md
-PLANO_PROJETO_MEDIFLOW_HACKATHON.pdf
-export_plano_pdf.py
-SEMANA_3_GRAFO_WORKFLOWS_KANBAN.md
-setup_kanban_semana_3.sh
-!README.md
+# 2. Ambientes Virtuais e Bibliotecas de Terceiros (Libs)
+*.venv
+*/.venv
+.venv/
+env/
+venv/
 
-# Application & Implementation Files
-mediflow_agent.py
-mediflow_schemas.py
-oci_storage.py
-app.py
-requirements.txt
-setup_github_kanban.sh
+# 3. Bancos de Dados Locais e Arquivos Temporários de Auditoria
+*.db
+*.sqlite
+*.sqlite3
+mediflow_audit.db
+test_audit.db
 
-
-# Local Storage Cache & Python Artifacts
+# 4. Storage Local Simulado e Caches do Python / Pytest
 oci_bucket_local/
 **/oci_bucket_local/
 __pycache__/
 **/__pycache__/
-*.pyc
-*.db
-*.sqlite
-*.sqlite3
+*.py[cod]
 .pytest_cache/
-*/week3
-week3
+.coverage
+htmlcov/
