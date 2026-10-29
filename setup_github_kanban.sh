@@ -10,7 +10,7 @@
 # ==============================================================================
 set -euo pipefail
 
-REPO="${1:-ONE-G10-Brasil/G10-BRASIL-equipo-22-Medflow}"
+REPO="${1:-No-Country-simulation/G10-BRASIL-equipo-22}"
 
 echo "🏥 Configurando Labels, Milestones e Issues do Kanban MediFlow no repositório: $REPO"
 

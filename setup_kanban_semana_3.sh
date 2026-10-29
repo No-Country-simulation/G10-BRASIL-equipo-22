@@ -12,7 +12,7 @@
 # ==============================================================================
 set -euo pipefail
 
-REPO="${1:-ONE-G10-Brasil/G10-BRASIL-equipo-22-Medflow}"
+REPO="${1:-No-Country-simulation/G10-BRASIL-equipo-22}"
 
 echo "🏥 Configurando as 12 Issues do Kanban da Semana 3 (M3) no repositório: $REPO"
 
