@@ -121,7 +121,8 @@ Alinhando as personas aos talentos complementares do time de 4 pessoas (**Carlos
   - `sprint:semana-1` (12/10 a 16/10) · `sprint:semana-2` (19/10 a 23/10) · `sprint:semana-3` (26/10 a 30/10)
   - `sprint:semana-4` (02/11 a 06/11) · `sprint:semana-5` (09/11 a 13/11) · `sprint:semana-6` (16/11 a 20/11)
 
-### 4.3 Visão do Quadro Kanban Atual:
+### 4.3 Visão do Quadro Kanban Completo (48 Cards / Semanas 3 a 6):
+
 ```mermaid
 kanban
   Concluido_M1_e_M2
@@ -131,18 +132,58 @@ kanban
     [M2] Motor NVIDIA NIM Llama 3.2 (Carlos)
     [M2] Ingestao Multimodal e UX (Fernando)
     [M2] OCI Storage Service (Helder)
-  Em_Homologacao_Semana_3
-    [M3] LangGraph StateGraph formal (Carlos)
-    [M3] Webhook Dispatcher Plantao (Fernando)
-    [M3] Segregacao OCI por Especialidade (Helder)
-    [M3] SQLite Audit Transacional (Helder)
-    [M3] API FastAPI v1.3 e HitL (Alessandro)
-    [M3] Suite 8 Auto-Testes (Alessandro)
-  Planejado_Semanas_4_a_6
-    [M4] GitHub Actions CI/CD Pipeline
-    [M4] Persistencia Relacional Prontuario
-    [M5] Interface Streamlit Completa
-    [M6] Gravacao Video Demo YouTube
+  Em_Homologacao_Semana_3 (26-30/10)
+    [CARD-01] Refatoracao StateGraph LangGraph (Carlos)
+    [CARD-02] Telemetria SRE Latencia por No (Carlos)
+    [CARD-03] Teste de Caos e Fallback SRE (Carlos)
+    [CARD-04] Modulo Workflows de Notificacao (Fernando)
+    [CARD-05] Webhook de Emergencia TEP/IAM (Fernando)
+    [CARD-06] Componente Visual de Alerta (Fernando)
+    [CARD-07] Persistencia Auditavel SQLite (Helder)
+    [CARD-08] Segregacao OCI Especialidade (Helder)
+    [CARD-09] Script Auditoria Custos Zero (Helder)
+    [CARD-10] Endpoints Inspecao do Grafo (Alessandro)
+    [CARD-11] Suite 8 Auto-Testes pytest (Alessandro)
+    [CARD-12] Setup Kanban GitHub Projects (Alessandro)
+  Semana_4_Banco_OCI_e_CICD (02-06/11)
+    [CARD-13] Pipeline CI/CD GitHub Actions (Carlos)
+    [CARD-14] Telemetria Producao e SLA SRE (Carlos)
+    [CARD-15] Testes de Carga Concorrente (Carlos)
+    [CARD-16] Ingestao Multimodal Otimizada (Fernando)
+    [CARD-17] Templates Enriquecidos Webhook (Fernando)
+    [CARD-18] Visualizador Status Webhooks (Fernando)
+    [CARD-19] Integracao OCI Autonomous DB (Helder)
+    [CARD-20] Uploads Remotos Reais OCI (Helder)
+    [CARD-21] Politica Expurgo 30 Dias (Helder)
+    [CARD-22] Endpoints Busca Historica (Alessandro)
+    [CARD-23] Conformidade Pydantic TISS/TUSS (Alessandro)
+    [CARD-24] Suite Testes Semana 4 (Alessandro)
+  Semana_5_Streamlit_e_HitL (09-13/11)
+    [CARD-25] Conexao Streamlit API Circuit Breaker (Carlos)
+    [CARD-26] Otimizacao Inferencia Latencia (Carlos)
+    [CARD-27] Chaos Testing Producao (Carlos)
+    [CARD-28] Visualizador PDF Imagem Lado a Lado (Fernando)
+    [CARD-29] Design System Clinico Hospitalar (Fernando)
+    [CARD-30] Filtros Dinamicos Fila HitL (Fernando)
+    [CARD-31] Deploy OCI Compute Always Free (Helder)
+    [CARD-32] Exportacao CSV/JSON Prontuarios (Helder)
+    [CARD-33] Relatorio FinOps OCI R$ 0,00 (Helder)
+    [CARD-34] Modulo Auditoria Reversa (Alessandro)
+    [CARD-35] Testes Aceitacao UAT 20 Casos (Alessandro)
+    [CARD-36] Documentacao Swagger e Contratos (Alessandro)
+  Semana_6_Demo_e_Submissao (16-20/11)
+    [CARD-37] Code Review Final e Freeze (Carlos)
+    [CARD-38] Gravacao Demo IA e SRE Video (Carlos)
+    [CARD-39] Auditoria Final Seguranca Git (Carlos)
+    [CARD-40] Gravacao UX e Visualizador Video (Fernando)
+    [CARD-41] Roteiro Tecnico 3 Minutos (Fernando)
+    [CARD-42] Co-edicao Masterizacao Video (Fernando)
+    [CARD-43] Gravacao Console OCI Custo Zero (Helder)
+    [CARD-44] Relatorio Auditoria Dados OCI (Helder)
+    [CARD-45] Backup Congelado Avaliacao (Helder)
+    [CARD-46] Gravacao Introducao Proposta (Alessandro)
+    [CARD-47] Upload YouTube e Metadados (Alessandro)
+    [CARD-48] Checklist Final e Submissao ONE (Alessandro)
 ```
 
 ---
