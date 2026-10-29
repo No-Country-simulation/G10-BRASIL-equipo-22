@@ -254,3 +254,4 @@ gh issue create --repo "$REPO" \
 
 chmod +x "$0"
 echo "✅ Todas as 36 Issues das Semanas 4, 5 e 6 foram criadas e vinculadas aos Milestones com sucesso!"
+
