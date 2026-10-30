@@ -29,7 +29,7 @@ flowchart TD
     Classifier --> Validator[ValidatorSRECheckNode / Validação Pydantic v2 & Confiabilidade]
     Validator --> Router{Decisão Condicional}
     
-    Router -- "Urgência Médica & Score >= 0.85" --> Emergency[EmergencyRouteNode / Webhook Plantão Médico]
+    Router -- "Urgência Médica, qualquer score" --> Emergency[EmergencyRouteNode / Webhook Plantão Médico]
     Router -- "Rotina Ambulatorial & Score >= 0.85" --> Routine[RoutineRouteNode / Farmácia & PEP]
     Router -- "Score < 0.85 ou Rasura/Ambiguidade" --> HitL[HitLRouteNode / Auditoria Humana]
     
