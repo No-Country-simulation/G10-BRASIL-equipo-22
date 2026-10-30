@@ -13,7 +13,7 @@ from __future__ import annotations
 import json
 from enum import Enum
 from typing import Any, Dict, Optional
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 
 class _CompatBaseModel(BaseModel):
@@ -59,10 +59,10 @@ class DocumentoClinicoInput(_CompatBaseModel):
         default=TipoArquivoEnum.PDF,
         description="Formato do documento recebido (PDF, IMAGEM, TEXTO, JSON)",
     )
-    documento_texto: str = Field(
-        ...,
+    documento_texto: Optional[str] = Field(
+        default=None,
         min_length=5,
-        description="Conteúdo textual extraído ou transcrição OCR/Multimodal do documento clínico",
+        description="Conteúdo textual extraído ou transcrição OCR/Multimodal; opcional quando há arquivo_binario_b64",
     )
     arquivo_binario_b64: Optional[str] = Field(
         default=None,
@@ -72,6 +72,13 @@ class DocumentoClinicoInput(_CompatBaseModel):
         default="Pronto_Socorro",
         description="Canal hospitalar de origem (ex.: Pronto_Socorro, Ambulatorio, Internacao)",
     )
+
+    @model_validator(mode="after")
+    def _exige_texto_ou_arquivo(self) -> "DocumentoClinicoInput":
+        """Scan e foto chegam sem texto; o que não pode é chegar sem nenhum dos dois."""
+        if not self.documento_texto and not self.arquivo_binario_b64:
+            raise ValueError("envie documento_texto, arquivo_binario_b64 ou ambos")
+        return self
 
 
 class ClassificacaoDocumento(_CompatBaseModel):

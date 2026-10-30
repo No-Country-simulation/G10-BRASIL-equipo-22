@@ -7,6 +7,7 @@ Integrações: Fernando Szekut (Webhooks), Helder (OCI & SQLite), Alessandro (Fa
 
 from __future__ import annotations
 
+import base64
 import datetime
 import json
 import logging
@@ -35,6 +36,7 @@ from mediflow_schemas import (
     ResultadoTriagemOutput,
     TipoArquivoEnum,
 )
+from mediflow_ingestao import EntradaInvalida, ingerir
 
 from week3.notifications import NotificationDispatcher
 from week3.storage import OCIStorageServiceV3
@@ -54,11 +56,23 @@ CRITICAL_EMERGENCY_FINDINGS = [
 ]
 
 
+def _decodificar_anexo(valor: str) -> bytes:
+    """Aceita Base64 puro ou data URL ("data:application/pdf;base64,...")."""
+    if valor.startswith("data:"):
+        valor = valor.split(",", 1)[-1]
+    try:
+        return base64.b64decode("".join(valor.split()), validate=True)
+    except ValueError as exc:  # binascii.Error e texto com caractere fora do ASCII
+        raise EntradaInvalida(f"Base64 inválido ({exc})") from None
+
+
 class MediFlowAgentState(TypedDict, total=False):
     """Estado tipado formal do Grafo de Decisão Condicional do LangGraph."""
 
     documento_input: DocumentoClinicoInput
     texto_normalizado: str
+    imagens_paginas: List[str]
+    avisos_ingestao: List[str]
     classificacao: Optional[ClassificacaoDocumento]
     dados_extraidos: Optional[DadosExtraidos]
     decisao_roteamento: Optional[DecisaoRoteamento]
@@ -110,7 +124,7 @@ class MediFlowStateGraphAgent:
         self.graph = self._build_state_graph()
         self.compiled_app = self.graph.compile()
 
-    def _call_nvidia_nim(self, doc: DocumentoClinicoInput, texto_normalizado: str) -> Optional[Dict[str, Any]]:
+    def _call_nvidia_nim(self, texto_normalizado: str, imagem_data_url: Optional[str] = None) -> Optional[Dict[str, Any]]:
         """Invoca o modelo multimodal NVIDIA NIM com retentativas e timeout resiliente."""
         if not self.nvidia_api_key:
             return None
@@ -138,12 +152,10 @@ class MediFlowStateGraphAgent:
         )
 
         user_content: Any
-        if doc.arquivo_binario_b64 and doc.tipo_arquivo in (TipoArquivoEnum.IMAGEM, TipoArquivoEnum.PDF):
-            b64_str = doc.arquivo_binario_b64
-            url_img = b64_str if b64_str.startswith("data:") else f"data:image/jpeg;base64,{b64_str}"
+        if imagem_data_url:
             user_content = [
                 {"type": "text", "text": f"Analise a imagem deste documento clínico:\n{texto_normalizado}"},
-                {"type": "image_url", "image_url": {"url": url_img}},
+                {"type": "image_url", "image_url": {"url": imagem_data_url}},
             ]
         else:
             user_content = f"Analise o seguinte documento clínico:\n{texto_normalizado}"
@@ -198,8 +210,36 @@ class MediFlowStateGraphAgent:
     def ingestor_node(self, state: MediFlowAgentState) -> MediFlowAgentState:
         t0 = time.time()
         doc = state["documento_input"]
-        texto_norm = " ".join(doc.documento_texto.strip().split())
-        state["texto_normalizado"] = texto_norm
+        telemetria = state.get("telemetria_sre", {})
+        textos = [doc.documento_texto] if doc.documento_texto else []
+        imagens: List[str] = []
+        avisos: List[str] = []
+
+        # Anexo (PDF, foto ou scan) lido página a página: camada de texto vira texto,
+        # página escaneada e foto viram JPEG para o modelo de visão (mediflow_ingestao)
+        if doc.arquivo_binario_b64:
+            try:
+                ingerido = ingerir(
+                    _decodificar_anexo(doc.arquivo_binario_b64),
+                    documento_id=doc.documento_id,
+                    canal_origem=doc.canal_origem,
+                )
+            except EntradaInvalida as exc:
+                avisos.append(f"anexo não pôde ser lido ({exc})")
+            else:
+                if ingerido.documento_texto:
+                    textos.append(ingerido.documento_texto)
+                imagens = [p.data_url() for p in ingerido.paginas if p.imagem_base64]
+                avisos.extend(ingerido.avisos)
+                telemetria["modo_leitura"] = ingerido.modo_leitura
+
+        # O Llama 3.2 Vision no NIM aceita uma imagem por requisição
+        if len(imagens) > 1:
+            avisos.append(f"{len(imagens)} páginas em imagem; o modelo de visão recebe só a primeira")
+
+        state["texto_normalizado"] = " ".join(" ".join(textos).split())
+        state["imagens_paginas"] = imagens
+        state["avisos_ingestao"] = avisos
 
         raw_path = self.storage.resolve_object_path(
             documento_id=doc.documento_id,
@@ -209,7 +249,7 @@ class MediFlowStateGraphAgent:
         )
         self.storage.save_json_object(raw_path, doc.to_dict(exclude_none=True))
 
-        telemetria = state.get("telemetria_sre", {})
+        telemetria["paginas_imagem"] = len(imagens)
         telemetria["ingestor_latencia_ms"] = round((time.time() - t0) * 1000, 2)
         telemetria["raw_path"] = raw_path
         state["telemetria_sre"] = telemetria
@@ -221,9 +261,10 @@ class MediFlowStateGraphAgent:
     def classifier_extractor_node(self, state: MediFlowAgentState) -> MediFlowAgentState:
         t0 = time.time()
         texto = state["texto_normalizado"]
-        doc = state["documento_input"]
+        imagens = state.get("imagens_paginas") or []
 
-        llm_data = self._call_nvidia_nim(doc, texto)
+        # Sem texto e sem imagem não há o que mandar ao modelo: a heurística cai na revisão humana
+        llm_data = self._call_nvidia_nim(texto, imagens[0] if imagens else None) if (texto or imagens) else None
         telemetria = state.get("telemetria_sre", {})
 
         if llm_data and isinstance(llm_data, dict):
@@ -367,6 +408,12 @@ class MediFlowStateGraphAgent:
         if not dados.medico_solicitante.crm:
             penalidades += 0.25
             motivos.append("registro CRM do médico solicitante ausente ou incompleto")
+
+        # Anexo ilegível, imagem borrada ou páginas que o modelo não viu
+        avisos_ingestao = state.get("avisos_ingestao") or []
+        if avisos_ingestao:
+            penalidades += 0.35
+            motivos.extend(avisos_ingestao)
 
         if penalidades > 0:
             novo_score = max(0.15, round(classif.score_confianca_classificacao - penalidades, 2))
