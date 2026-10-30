@@ -49,8 +49,11 @@ week3/
 ├── agent.py              # MediFlowStateGraphAgent (LangGraph StateGraph, nós e roteador)
 ├── api.py                # FastAPI v1.3 com endpoints de inspeção e triagem
 ├── notifications.py      # NotificationDispatcher (Webhooks clínicos e alertas de plantão)
+├── ui_alertas.py         # Alerta visual do plantão no Streamlit (banner pulsante + toast)
 ├── storage.py            # OCIStorageServiceV3 (Segregação OCI e histórico SQLite)
 ├── test_week3.py         # Suite completa de 8 auto-testes com pytest
+├── test_alertas_plantao.py # Entrega, nova tentativa e falha do NotificationDispatcher
+├── test_ui_alertas.py    # HTML do alerta de plantão (escape, acessibilidade)
 ├── run_tests.py          # Runner executivo CLI com relatório formatado
 └── README.md             # Este guia executivo para a reunião de alinhamento
 ```

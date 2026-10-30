@@ -37,6 +37,7 @@ from week3.agent import (
 )
 from week3.notifications import NotificationDispatcher
 from week3.storage import OCIStorageServiceV3
+from week3.ui_alertas import descrever_entrega, mostrar_alerta_plantao
 
 
 # Inicialização segura de estado no Streamlit
@@ -147,7 +148,11 @@ def main():
                 confianca = resultado.classificacao.score_confianca_classificacao
 
                 if prioridade == "Urgente":
-                    st.error(f"🚨 **ACHADO CRÍTICO DE URGÊNCIA DETECTADO!**\n\nDiagnóstico: **{resultado.dados_extraidos.diagnostico_principal}**")
+                    registro = next(
+                        (a for a in reversed(dispatcher.historico_alertas) if a.documento_id == resultado.documento_id),
+                        None,
+                    )
+                    mostrar_alerta_plantao(resultado, registro)
                 elif resultado.decisao_roteamento.requer_auditoria_humana:
                     st.warning(f"⚠️ **DOCUMENTO RETIDO PARA AUDITORIA HUMANA (HitL)**\n\nScore de Confiança: **{confianca:.2f}** (< 0.85)")
                 else:
@@ -203,14 +208,26 @@ def main():
         st.subheader("🚨 Despachador de Alertas em Tempo Real & Webhooks")
         st.write("Responsável: **Fernando Szekut (Fernando Nexus)** · Módulo `NotificationDispatcher`")
 
+        if dispatcher.mock_mode:
+            st.warning("**Modo simulado:** sem `WEBHOOK_EMERGENCY_URL`, os alertas abaixo não saíram do MediFlow.")
+
         alertas = dispatcher.get_recent_alerts(limit=20)
         if alertas:
+            falhas = [al for al in alertas if al["status"] not in ("sucesso", "sucesso_mock")]
             st.success(f"Total de alertas emitidos nesta sessão: **{len(alertas)}**")
+            if falhas:
+                st.error(f"**{len(falhas)} alerta(s) não entregue(s) ao plantão.** Veja a resposta do servidor abaixo.")
             for idx, al in enumerate(alertas):
+                texto_entrega, _ = descrever_entrega(al["status"])
                 with st.container():
-                    st.markdown(f"**Alerta #{idx+1}** · `{al['timestamp']}` · Canal: `{al['canal']}`")
+                    st.markdown(
+                        f"**Alerta #{idx+1}** · `{al['timestamp']}` · Canal: `{al['canal']}` · "
+                        f"Webhook: **{texto_entrega}** · {al['latencia_ms']} ms · {al['tentativas']} tentativa(s)"
+                    )
                     st.info(f"Paciente: **{al['paciente']}** | Diagnóstico: **{al['diagnostico']}**")
-                    st.code(al['mensagem'], language="text")
+                    st.code(al["mensagem"], language="text")
+                    if al["status"] not in ("sucesso", "sucesso_mock") and al["resposta_servidor"]:
+                        st.caption(f"Resposta do servidor: {al['resposta_servidor']}")
                     st.markdown("---")
         else:
             st.info("Nenhum alerta de emergência médica disparado ainda. Execute o **Cenário 2 (TEP Agudo)** para disparar um alerta!")
