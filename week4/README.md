@@ -67,3 +67,4 @@ python week4/run_week4_tests.py
 uvicorn week3.api:app --reload --port 8000
 ```
 Acesse no navegador: `http://127.0.0.1:8000/api/v1/telemetria/producao`
+

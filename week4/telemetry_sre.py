@@ -192,3 +192,4 @@ class SRETelemetryEngine:
         path.write_text(json.dumps(metrics, indent=2, ensure_ascii=False), encoding="utf-8")
         logger.info("Relatório SRE consolidado exportado em: %s", path)
         return path
+
