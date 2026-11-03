@@ -33,3 +33,7 @@ __pycache__/
 .pytest_cache/
 .coverage
 htmlcov/
+
+# 5. Workflows do GitHub Actions mantidos em ci/ (requer escopo OAuth 'workflow' no token do gh para subir .github/workflows/)
+.github/workflows/
+

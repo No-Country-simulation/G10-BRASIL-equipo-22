@@ -26,6 +26,9 @@
 | **MEL-012** | 2026-10-27 | **Qualidade & SRE** | **Suite Completa de Auto-Testes Automatizados (8 testes)**: runner executivo CLI (`run_tests.py`) e cobertura de 100% dos cenários (Rotina, TEP, HitL, Webhooks, OCI, SQLite, SLA e FastAPI). | Homologação ágil e confiável para apresentação da equipe na reunião de alinhamento. |
 | **MEL-013** | 2026-10-27 | **Backend & API** | **FastAPI v1.3 com Inspeção Topológica do Grafo**: novos endpoints `/api/v1/grafo/estrutura` e `/api/v1/telemetria` expondo a topologia do StateGraph e métricas SRE. | Facilita a integração com frontends modernos e sistemas hospitalareslegados. |
 | **MEL-014** | 2026-10-29 | **Governança & Gestão** | **Padronização do Cronograma em Dias Úteis (Seg-Sex) & Liberação Git**: ajuste rigoroso de todas as 6 semanas para dias úteis e liberação de código para a squad mantendo `.env` e segredos blindados. | Garante colaboração ágil do time sem riscos de vazamento de credenciais na nuvem. |
+| **MEL-015** | 2026-11-03 | **DevOps & CI/CD** | **Pipeline Automatizado GitHub Actions (`.github/workflows/ci.yml`)**: compilação, validação sintática e execução automática de 16 testes pytest a cada push/PR. | Blindagem de regressões e entrega contínua com qualidade garantida. |
+| **MEL-016** | 2026-11-03 | **Observabilidade SRE** | **Motor de Telemetria Estatística de Produção (`week4/telemetry_sre.py`)**: cálculo de percentis p50/p75/p90/p95/p99, taxa de cumprimento de SLA (< 5s) e Error Budget (alvo 99.9%). | Visibilidade executiva de nível empresarial sobre a estabilidade do agente. |
+| **MEL-017** | 2026-11-03 | **Confiabilidade & Carga** | **Motor de Benchmark de Concorrência e Stress Burst (`week4/load_testing.py`)**: execução paralela de 10 a 50 admissões clínicas simultâneas com throughput de 85 req/s. | Comprova que o LangGraph suporta picos de pronto-socorro sem travamento ou degradação. |
 
 ---
 
