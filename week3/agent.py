@@ -82,7 +82,7 @@ class MediFlowStateGraphAgent:
          ▼
       [validator_sre_check_node] (Pydantic v2 + Regras de Confiabilidade Clínica)
          │
-         ├──► (Conditional Edge: Urgente & Score >= 0.85) ──► [emergency_route_node] (Dispara Webhook)
+         ├──► (Conditional Edge: Urgente, qualquer score) ──► [emergency_route_node] (Webhook; score < 0.85 também vai à revisão)
          ├──► (Conditional Edge: Rotina  & Score >= 0.85) ──► [routine_route_node]   (Farmácia / PEP)
          └──► (Conditional Edge: Score < 0.85 ou Ambíguo) ──► [hitl_route_node]      (Fila Revisão Humana)
                                                                       │
@@ -371,7 +371,8 @@ class MediFlowStateGraphAgent:
         if penalidades > 0:
             novo_score = max(0.15, round(classif.score_confianca_classificacao - penalidades, 2))
             classif.score_confianca_classificacao = novo_score
-            if novo_score < CONFIDENCE_THRESHOLD_HITL:
+            # Dado faltando não apaga a urgência: o achado crítico continua indo para o plantão
+            if novo_score < CONFIDENCE_THRESHOLD_HITL and classif.nivel_prioridade != NivelPrioridadeEnum.URGENTE:
                 classif.nivel_prioridade = NivelPrioridadeEnum.REVISAO_HUMANA
 
         telemetria = state.get("telemetria_sre", {})
@@ -390,10 +391,12 @@ class MediFlowStateGraphAgent:
         score = classif.score_confianca_classificacao
         prioridade = classif.nivel_prioridade
 
-        if score < CONFIDENCE_THRESHOLD_HITL or prioridade == NivelPrioridadeEnum.REVISAO_HUMANA:
-            return "hitl_route"
+        # Urgência antes do score: um TEP sem o nome do paciente não pode esperar na fila sem
+        # alerta. Com score baixo, a rota de emergência também manda o documento à revisão humana.
         if prioridade == NivelPrioridadeEnum.URGENTE:
             return "emergency_route"
+        if score < CONFIDENCE_THRESHOLD_HITL or prioridade == NivelPrioridadeEnum.REVISAO_HUMANA:
+            return "hitl_route"
         return "routine_route"
 
     # -------------------------------------------------------------------------
@@ -403,7 +406,8 @@ class MediFlowStateGraphAgent:
         t0 = time.time()
         dados = state["dados_extraidos"]
         doc = state["documento_input"]
-        assert dados is not None
+        classif = state["classificacao"]
+        assert dados is not None and classif is not None
 
         diag = dados.diagnostico_principal or "Quadro Crítico Agudo"
         paciente = dados.paciente.nome or "Paciente Sintomático"
@@ -414,10 +418,20 @@ class MediFlowStateGraphAgent:
             mensagem=f"ALERTA URGENTE: {diag} para paciente {paciente} no Pronto-Socorro.",
         )
 
+        justificativa = f"Achado crítico de alta gravidade ({diag}) detectado em paciente sintomático."
+        score = classif.score_confianca_classificacao
+        requer_revisao = score < CONFIDENCE_THRESHOLD_HITL
+        if requer_revisao:
+            motivos = state.get("telemetria_sre", {}).get("motivos_ambiguidade", [])
+            motivos_str = "; ".join(motivos) if motivos else "score de confiança abaixo do threshold regulatório"
+            justificativa += (
+                f" Plantão avisado e documento enviado também à Auditoria Humana: {motivos_str} (score={score:.2f} < 0.85)."
+            )
+
         state["decisao_roteamento"] = DecisaoRoteamento(
             destino_principal=DestinoRoteamentoEnum.FILA_EMERGENCIA_MEDICA,
-            requer_auditoria_humana=False,
-            justificativa_roteamento=f"Achado crítico de alta gravidade ({diag}) detectado em paciente sintomático.",
+            requer_auditoria_humana=requer_revisao,
+            justificativa_roteamento=justificativa,
             notificacao_gerada=notificacao,
         )
 
@@ -517,7 +531,9 @@ class MediFlowStateGraphAgent:
             status_backup="sucesso",
         )
 
-        status_doc = "retido_auditoria_humana" if decisao.requer_auditoria_humana else "processado"
+        # Só a fila de revisão retém o documento; a emergência com revisão já avisou o plantão
+        retido = decisao.destino_principal == DestinoRoteamentoEnum.FILA_REVISAO_HUMANA
+        status_doc = "retido_auditoria_humana" if retido else "processado"
 
         resultado = ResultadoTriagemOutput(
             status=status_doc,
@@ -616,7 +632,7 @@ class MediFlowStateGraphAgent:
             "    Ingestor --> Classifier[ClassifierExtractorNode / NVIDIA NIM Llama 3.2 11B Vision]\n"
             "    Classifier --> Validator[ValidatorSRECheckNode / Pydantic v2]\n"
             "    Validator --> Router{Decisão Condicional}\n"
-            "    Router -- 'Urgência & Score >= 0.85' --> Emergency[EmergencyRouteNode / Webhook Plantão]\n"
+            "    Router -- 'Urgência, qualquer score' --> Emergency[EmergencyRouteNode / Webhook Plantão]\n"
             "    Router -- 'Rotina & Score >= 0.85' --> Routine[RoutineRouteNode / Farmácia & PEP]\n"
             "    Router -- 'Score < 0.85 ou Ambíguo' --> HitL[HumanInTheLoopNode / Auditoria Humana]\n"
             "    Emergency --> Storage[OCIPersistenceNode / Segregação por Especialidade & SQLite]\n"
