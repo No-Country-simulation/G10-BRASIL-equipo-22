@@ -788,6 +788,15 @@ def obter_telemetria_sre() -> dict:
     }
 
 
+@app.get("/api/v1/telemetria/producao")
+def obter_telemetria_producao_sre() -> dict:
+    """Retorna relatório SRE avançado com percentis (p50, p95, p99), error budget e SLA."""
+    from week4.telemetry_sre import SRETelemetryEngine
+
+    engine = SRETelemetryEngine(db_path=_storage_service.db_path)
+    return engine.collect_from_sqlite(limit=200)
+
+
 @app.get("/api/v1/notificacoes")
 def listar_alertas_notificacoes() -> List[Dict[str, Any]]:
     """Retorna o histórico de Webhooks e notificações de emergência médica disparados."""
