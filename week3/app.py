@@ -37,7 +37,7 @@ from week3.agent import (
 )
 from week3.notifications import NotificationDispatcher
 from week3.storage import OCIStorageServiceV3
-from week3.ui_alertas import descrever_entrega, mostrar_alerta_plantao
+from week3.ui_alertas import descrever_entrega, mostrar_alerta_plantao, linhas_historico, texto_reenvio
 
 
 # Inicialização segura de estado no Streamlit
@@ -211,24 +211,51 @@ def main():
         if dispatcher.mock_mode:
             st.warning("**Modo simulado:** sem `WEBHOOK_EMERGENCY_URL`, os alertas abaixo não saíram do MediFlow.")
 
-        alertas = dispatcher.get_recent_alerts(limit=20)
+        alertas = dispatcher.get_recent_alerts(limit=50)
         if alertas:
-            falhas = [al for al in alertas if al["status"] not in ("sucesso", "sucesso_mock")]
-            st.success(f"Total de alertas emitidos nesta sessão: **{len(alertas)}**")
-            if falhas:
-                st.error(f"**{len(falhas)} alerta(s) não entregue(s) ao plantão.** Veja a resposta do servidor abaixo.")
-            for idx, al in enumerate(alertas):
+            # Histórico de entregas com latência HTTP e reenvio manual (CARD-18)
+            resumo = dispatcher.resumo_entregas()
+            c1, c2, c3, c4 = st.columns(4)
+            c1.metric("Alertas na sessão", resumo["total"])
+            c2.metric("Entregues ao plantão", resumo["entregues"])
+            c3.metric("Não entregues", resumo["nao_entregues"])
+            c4.metric(
+                "Latência HTTP média",
+                f"{resumo['latencia_media_ms']} ms" if resumo["latencia_media_ms"] is not None else "sem envio real",
+            )
+            if "mf_ultimo_reenvio" in st.session_state:
+                nivel, texto = st.session_state.pop("mf_ultimo_reenvio")
+                getattr(st, nivel)(texto)
+            if resumo["nao_entregues"]:
+                st.error(f"**{resumo['nao_entregues']} alerta(s) não entregue(s) ao plantão.** Use o reenvio abaixo.")
+
+            st.markdown("#### Histórico de entregas")
+            st.dataframe(linhas_historico(alertas), use_container_width=True, hide_index=True)
+
+            st.markdown("#### Detalhes e reenvio")
+            for al in reversed(alertas):
                 texto_entrega, _ = descrever_entrega(al["status"])
-                with st.container():
+                titulo = f"{al['timestamp'][:19].replace('T', ' ')} · {al['documento_id']} · {texto_entrega}"
+                with st.expander(titulo, expanded=al["pode_reenviar"]):
                     st.markdown(
-                        f"**Alerta #{idx+1}** · `{al['timestamp']}` · Canal: `{al['canal']}` · "
-                        f"Webhook: **{texto_entrega}** · {al['latencia_ms']} ms · {al['tentativas']} tentativa(s)"
+                        f"Canal: `{al['canal']}` · {al['latencia_ms']} ms · {al['tentativas']} tentativa(s) · "
+                        f"{al['reenvios']} reenvio(s) · ID `{al['alerta_id']}`"
                     )
                     st.info(f"Paciente: **{al['paciente']}** | Diagnóstico: **{al['diagnostico']}**")
                     st.code(al["mensagem"], language="text")
                     if al["status"] not in ("sucesso", "sucesso_mock") and al["resposta_servidor"]:
                         st.caption(f"Resposta do servidor: {al['resposta_servidor']}")
-                    st.markdown("---")
+                    if al["status"] != "sucesso":
+                        if st.button(
+                            "Reenviar alerta ao plantão",
+                            key=f"reenviar_{al['alerta_id']}",
+                            disabled=not al["pode_reenviar"],
+                            help=None if al["pode_reenviar"] else "Modo simulado: configure WEBHOOK_EMERGENCY_URL para reenviar.",
+                        ):
+                            nivel, texto = texto_reenvio(dispatcher.reenviar(al["alerta_id"]))
+                            st.session_state["mf_ultimo_reenvio"] = (nivel, texto)
+                            st.rerun()
+
         else:
             st.info("Nenhum alerta de emergência médica disparado ainda. Execute o **Cenário 2 (TEP Agudo)** para disparar um alerta!")
 

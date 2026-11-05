@@ -11,7 +11,7 @@ de ir para o unsafe_allow_html.
 from __future__ import annotations
 
 import html
-from typing import Any, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 # Vermelho da classificação de Manchester (emergência); texto branco com contraste de 6,6:1 (WCAG AA)
 CSS_ALERTA = """
@@ -90,3 +90,39 @@ def mostrar_alerta_plantao(resultado: Any, registro: Optional[Any]) -> None:
     )
     texto_entrega, _ = descrever_entrega(status)
     st.toast(f"Plantão acionado ({resultado.documento_id}): webhook {texto_entrega}", icon="🚨")
+
+
+# -----------------------------------------------------------------------------
+# Histórico de entregas e reenvio manual (CARD-18)
+# -----------------------------------------------------------------------------
+
+def linhas_historico(alertas: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """Linhas da tabela de histórico, do alerta mais recente para o mais antigo."""
+    linhas = []
+    for al in reversed(alertas):
+        texto_entrega, _ = descrever_entrega(al.get("status"))
+        linhas.append({
+            "Horário": (al.get("timestamp") or "")[:19].replace("T", " "),
+            "Documento": al.get("documento_id"),
+            "Canal": al.get("canal"),
+            "Entrega": texto_entrega,
+            "Latência HTTP (ms)": al.get("latencia_ms"),
+            "Tentativas": al.get("tentativas"),
+            "Reenvios": al.get("reenvios", 0),
+            "ID": al.get("alerta_id"),
+        })
+    return linhas
+
+
+def texto_reenvio(resultado: Dict[str, Any]) -> Tuple[str, str]:
+    """(nível, texto) para o aviso depois de clicar em reenviar: nível é success, warning ou error."""
+    status = resultado.get("status_envio")
+    alerta = resultado.get("alerta_id", "?")
+    if status == "sucesso":
+        return ("success", f"Alerta {alerta} entregue ao plantão no reenvio ({resultado.get('latencia_ms')} ms).")
+    if status == "ja_entregue":
+        return ("warning", f"Alerta {alerta} já tinha sido entregue; nada foi reenviado.")
+    if status == "sem_webhook":
+        return ("warning", "Modo simulado: sem WEBHOOK_EMERGENCY_URL não há para onde reenviar.")
+    texto_entrega, _ = descrever_entrega(status)
+    return ("error", f"Reenvio do alerta {alerta} {texto_entrega}. Resposta: {resultado.get('detalhes') or 'sem resposta'}")

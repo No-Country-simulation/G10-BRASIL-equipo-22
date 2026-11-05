@@ -11,6 +11,7 @@ import datetime
 import logging
 import os
 import time
+import uuid
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -39,6 +40,10 @@ class AlertaClinicoRegistro:
     latencia_ms: float = 0.0
     tentativas: int = 0
     payload: Dict[str, Any] = field(default_factory=dict)
+    # Identifica o alerta na aba de histórico e no reenvio manual (CARD-18)
+    alerta_id: str = field(default_factory=lambda: uuid.uuid4().hex[:8])
+    reenvios: int = 0
+    ultimo_reenvio: Optional[str] = None
 
     @property
     def entregue(self) -> bool:
@@ -200,6 +205,66 @@ class NotificationDispatcher:
         self.historico_alertas.append(registro)
         return registro
 
+    def pode_reenviar(self, registro: AlertaClinicoRegistro) -> bool:
+        """Só alerta real que não chegou ao plantão; no modo simulado não há para onde reenviar."""
+        return not registro.entregue and not self.mock_mode
+
+    def reenviar(self, alerta_id: str) -> Dict[str, Any]:
+        """
+        Reenvio manual (CARD-18) de um alerta que não chegou ao plantão.
+
+        Manda o payload original, marcado com reenvio_manual (1, 2, ...) para o receptor poder
+        descartar duplicata, e atualiza o mesmo registro do histórico: status e resposta passam a
+        ser os do reenvio, latencia_ms é a do reenvio e tentativas soma todas as feitas.
+        """
+        registro = next((r for r in self.historico_alertas if r.alerta_id == alerta_id), None)
+        if registro is None:
+            raise KeyError(f"Alerta {alerta_id} não está no histórico desta sessão.")
+        if registro.entregue:
+            return {"status_envio": "ja_entregue", "alerta_id": alerta_id}
+        if self.mock_mode:
+            return {"status_envio": "sem_webhook", "alerta_id": alerta_id}
+
+        agora = datetime.datetime.now().isoformat()
+        payload = {**registro.payload, "reenvio_manual": registro.reenvios + 1, "timestamp_reenvio": agora}
+        status_envio, resposta, latencia, tentativas = self._enviar(payload)
+
+        registro.status_entrega = status_envio
+        registro.resposta_servidor = resposta
+        registro.latencia_ms = latencia
+        registro.tentativas += tentativas
+        registro.reenvios += 1
+        registro.ultimo_reenvio = agora
+
+        if status_envio == "sucesso":
+            logger.info("Alerta %s (Doc: %s) entregue no reenvio manual %d", alerta_id, registro.documento_id, registro.reenvios)
+        else:
+            logger.error(
+                "Reenvio manual do alerta %s (Doc: %s) também falhou: %s, %s",
+                alerta_id, registro.documento_id, status_envio, resposta,
+            )
+        return {
+            "status_envio": status_envio,
+            "alerta_id": alerta_id,
+            "latencia_ms": latencia,
+            "tentativas": tentativas,
+            "reenvios": registro.reenvios,
+            "detalhes": resposta,
+        }
+
+    def resumo_entregas(self) -> Dict[str, Any]:
+        """Números para o topo da aba: quantos chegaram, quantos não, e a latência dos envios reais."""
+        reais = [r for r in self.historico_alertas if r.status_entrega != "sucesso_mock"]
+        latencias = [r.latencia_ms for r in reais if r.tentativas > 0]
+        return {
+            "total": len(self.historico_alertas),
+            "entregues": sum(1 for r in self.historico_alertas if r.entregue),
+            "nao_entregues": sum(1 for r in reais if not r.entregue),
+            "simulados": len(self.historico_alertas) - len(reais),
+            "latencia_media_ms": round(sum(latencias) / len(latencias), 2) if latencias else None,
+            "latencia_max_ms": max(latencias) if latencias else None,
+        }
+
     def get_recent_alerts(self, limit: int = 10) -> List[Dict[str, Any]]:
         """Retorna os últimos alertas clínicos registrados para auditoria visual."""
         return [
@@ -216,6 +281,10 @@ class NotificationDispatcher:
                 "resposta_servidor": r.resposta_servidor,
                 "latencia_ms": r.latencia_ms,
                 "timestamp": r.timestamp,
+                "alerta_id": r.alerta_id,
+                "reenvios": r.reenvios,
+                "ultimo_reenvio": r.ultimo_reenvio,
+                "pode_reenviar": self.pode_reenviar(r),
             }
             for r in self.historico_alertas[-limit:]
         ]

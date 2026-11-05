@@ -35,7 +35,7 @@ class _Resposta:
 @pytest.fixture
 def servidor(monkeypatch):
     """Troca o httpx.Client por um falso que responde em sequência (status ou exceção)."""
-    estado = {"respostas": [], "chamadas": 0}
+    estado = {"respostas": [], "chamadas": 0, "payloads": []}
 
     class ClienteFalso:
         def __init__(self, *args, **kwargs):
@@ -49,6 +49,7 @@ def servidor(monkeypatch):
 
         def post(self, url, **kwargs):
             estado["chamadas"] += 1
+            estado["payloads"].append(kwargs.get("json"))
             resposta = estado["respostas"].pop(0)
             if isinstance(resposta, Exception):
                 raise resposta
@@ -125,3 +126,90 @@ def test_falha_de_rede_fica_no_historico_como_nao_entregue(servidor, caplog):
     assert registro.entregue is False
     assert registro.payload["documento_id"] == "DOC-TEST-TEP"  # guardado para o reenvio (CARD-18)
     assert "NÃO entregue" in caplog.text
+
+
+# -----------------------------------------------------------------------------
+# Reenvio manual e histórico de entregas (CARD-18)
+# -----------------------------------------------------------------------------
+
+def test_reenvio_entrega_alerta_que_falhou(servidor, caplog):
+    servidor["respostas"] = [503, 503, 200]
+    dispatcher = NotificationDispatcher(webhook_url=URL, espera_entre_tentativas=0)
+    disparar(dispatcher)
+    registro = dispatcher.historico_alertas[-1]
+    assert registro.entregue is False
+
+    with caplog.at_level(logging.INFO, logger="mediflow.notifications"):
+        res = dispatcher.reenviar(registro.alerta_id)
+
+    assert res["status_envio"] == "sucesso"
+    assert registro.entregue is True
+    assert registro.reenvios == 1
+    assert registro.tentativas == 3  # 2 no disparo + 1 no reenvio
+    assert registro.ultimo_reenvio is not None
+    # mesmo payload, marcado para o receptor poder descartar duplicata
+    reenviado = servidor["payloads"][-1]
+    assert reenviado["documento_id"] == "DOC-TEST-TEP"
+    assert reenviado["reenvio_manual"] == 1
+    assert "reenvio_manual" not in registro.payload  # o original fica intacto
+    assert len(dispatcher.historico_alertas) == 1  # atualiza o registro, não cria outro
+
+
+def test_reenvio_que_falha_de_novo_continua_reenviavel(servidor, caplog):
+    servidor["respostas"] = [404, 404]
+    dispatcher = NotificationDispatcher(webhook_url=URL, espera_entre_tentativas=0)
+    disparar(dispatcher)
+    alerta_id = dispatcher.historico_alertas[-1].alerta_id
+
+    with caplog.at_level(logging.ERROR, logger="mediflow.notifications"):
+        res = dispatcher.reenviar(alerta_id)
+
+    assert res["status_envio"] == "erro_http_404"
+    assert "também falhou" in caplog.text
+    alerta = dispatcher.get_recent_alerts()[0]
+    assert alerta["reenvios"] == 1
+    assert alerta["pode_reenviar"] is True
+
+
+def test_reenvio_nao_repete_alerta_ja_entregue(servidor):
+    servidor["respostas"] = [200]
+    dispatcher = NotificationDispatcher(webhook_url=URL, espera_entre_tentativas=0)
+    disparar(dispatcher)
+
+    res = dispatcher.reenviar(dispatcher.historico_alertas[-1].alerta_id)
+    assert res["status_envio"] == "ja_entregue"
+    assert servidor["chamadas"] == 1
+    assert dispatcher.get_recent_alerts()[0]["pode_reenviar"] is False
+
+
+def test_reenvio_em_modo_simulado_nao_envia():
+    dispatcher = NotificationDispatcher(mock_mode=True)
+    disparar(dispatcher)
+
+    res = dispatcher.reenviar(dispatcher.historico_alertas[-1].alerta_id)
+    assert res["status_envio"] == "sem_webhook"
+    assert dispatcher.get_recent_alerts()[0]["pode_reenviar"] is False
+
+
+def test_reenvio_de_alerta_desconhecido():
+    dispatcher = NotificationDispatcher(mock_mode=True)
+    with pytest.raises(KeyError):
+        dispatcher.reenviar("naoexiste")
+
+
+def test_resumo_separa_entregue_falha_e_simulado(servidor):
+    servidor["respostas"] = [200, 404]
+    dispatcher = NotificationDispatcher(webhook_url=URL, espera_entre_tentativas=0)
+    disparar(dispatcher)
+    disparar(dispatcher)
+    dispatcher.mock_mode = True
+    disparar(dispatcher)
+
+    resumo = dispatcher.resumo_entregas()
+    assert resumo["total"] == 3
+    assert resumo["entregues"] == 1
+    assert resumo["nao_entregues"] == 1
+    assert resumo["simulados"] == 1
+    assert resumo["latencia_media_ms"] is not None  # só os dois envios reais entram na média
+    assert len({a["alerta_id"] for a in dispatcher.get_recent_alerts()}) == 3
+
