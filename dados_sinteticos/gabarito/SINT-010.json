@@ -1,0 +1,59 @@
+{
+  "documento_id": "SINT-010",
+  "classificacao": {
+    "tipo_documento": "Receituário Médico",
+    "especialidade": "Pneumologia",
+    "nivel_prioridade": "Rotina"
+  },
+  "dados_extraidos": {
+    "paciente": {
+      "nome": "Lúcia Helena Prates",
+      "idade": 55
+    },
+    "medico_solicitante": {
+      "nome": "Dr. Fábio Teixeira Guimarães",
+      "crm": "29874-PR"
+    },
+    "exame_realizado": null,
+    "exames_solicitados": [],
+    "diagnostico_principal": null,
+    "cid_sugerido": null,
+    "medicamentos": [
+      {
+        "nome": "Budesonida + formoterol",
+        "dosagem": "200/6 mcg",
+        "via": "inalatória",
+        "posologia": "1 cápsula de 12 em 12 horas, uso contínuo"
+      },
+      {
+        "nome": "Salbutamol",
+        "dosagem": "100 mcg",
+        "via": "inalatória",
+        "posologia": "2 jatos se falta de ar, até de 6 em 6 horas"
+      }
+    ]
+  },
+  "decisao_roteamento": {
+    "destino_principal": "Farmacia_Hospitalar",
+    "requer_auditoria_humana": false,
+    "notificacao_gerada": null
+  },
+  "_avaliacao": {
+    "cenario": "rotina",
+    "formato": "imagem",
+    "degradacao": "foto",
+    "arquivo": "documentos/SINT-010.jpg",
+    "tipo_arquivo": "IMAGEM",
+    "canal_origem": "Ambulatorio",
+    "motivo": "Receita manuscrita, mas legível e completa.",
+    "armadilha": "Escrita à mão e fotografada: testa a leitura multimodal num caso que deve passar direto.",
+    "cid_aceitos": [
+      null,
+      "J45.9",
+      "J44.9"
+    ],
+    "campos_ausentes": [],
+    "decisao_pendente": null,
+    "transcricao": "Dr. Fábio Teixeira Guimarães\nPneumologia - CRM-PR 29874 - Rua Comendador Araújo, 500, sala 12 - Curitiba/PR\n\nPaciente: Lúcia Helena Prates\nIdade: 55 anos\nUso inalatório:\n1) Budesonida + formoterol 200/6 mcg (cápsula inalatória)\n     inalar 1 cápsula de 12/12h - uso contínuo\n2) Salbutamol 100 mcg spray\n     2 jatos se falta de ar, até de 6/6h\n\nCuritiba, 14/10/2026\nCarimbo: Dr. Fábio Teixeira Guimarães / Pneumologia / CRM-PR 29874\n\nDOCUMENTO FICTÍCIO - dados sintéticos para teste do MediFlow (Equipo 22). Sem validade clínica.\n"
+  }
+}

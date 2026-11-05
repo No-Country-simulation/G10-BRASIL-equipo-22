@@ -1,0 +1,46 @@
+{
+  "documento_id": "SINT-016",
+  "classificacao": {
+    "tipo_documento": "Guia de Solicitação de Procedimento",
+    "especialidade": "Cardiologia",
+    "nivel_prioridade": "Urgente"
+  },
+  "dados_extraidos": {
+    "paciente": {
+      "nome": "Cláudio Henrique Barbosa",
+      "idade": null
+    },
+    "medico_solicitante": {
+      "nome": "Dr. Rafael Nogueira Prado",
+      "crm": "41577-PR"
+    },
+    "exame_realizado": null,
+    "exames_solicitados": [
+      "Angiotomografia de aorta torácica e abdominal"
+    ],
+    "diagnostico_principal": "Suspeita de dissecção aguda de aorta",
+    "cid_sugerido": "I71.0",
+    "medicamentos": []
+  },
+  "decisao_roteamento": {
+    "destino_principal": "Auditoria_Autorizacoes",
+    "requer_auditoria_humana": false,
+    "notificacao_gerada": null
+  },
+  "_avaliacao": {
+    "cenario": "urgencia",
+    "formato": "pdf_escaneado",
+    "degradacao": "scan_leve",
+    "arquivo": "documentos/SINT-016.pdf",
+    "tipo_arquivo": "PDF",
+    "canal_origem": "Central_Autorizacoes",
+    "motivo": "Pedido urgente de exame para suspeita de dissecção de aorta.",
+    "armadilha": null,
+    "cid_aceitos": [
+      "I71.0"
+    ],
+    "campos_ausentes": [],
+    "decisao_pendente": "Guia com caráter de urgência: aqui vai para a Auditoria de Autorizações com prioridade Urgente (a autorização precisa sair na hora, mas quem decide é a operadora). O grafo do README manda toda urgência para a fila de emergência. Decidir com a equipe.",
+    "transcricao": "SAÚDE INTEGRAL PLANOS\nGUIA DE SERVIÇO PROFISSIONAL / SERVIÇO AUXILIAR DE DIAGNÓSTICO E TERAPIA - SP/SADT\nRegistro ANS: 419999\nNº da guia no prestador: 2026-0009120\n\nDADOS DO BENEFICIÁRIO\nNúmero da carteira: 0 8812 019934 07 1\nNome: Cláudio Henrique Barbosa\n\nDADOS DO SOLICITANTE\nNome do contratado: Hospital Aurora do Vale\nNome do profissional solicitante: Dr. Rafael Nogueira Prado\nConselho profissional: CRM\nNúmero no conselho: 41577\nUF: PR\nCódigo CBO: 225120\n\nDADOS DA SOLICITAÇÃO\nCaráter do atendimento: 2 - Urgência/Emergência\nData da solicitação: 18/10/2026\nIndicação clínica: Dor torácica intensa, em rasgada, com irradiação para o dorso e assimetria de pulsos nos membros superiores. Suspeita de dissecção aguda de aorta.\n\nPROCEDIMENTOS SOLICITADOS\nTabela | Código | Descrição | Qtde. solicitada\n22 | 99000452 | Angiotomografia de aorta torácica e abdominal | 1\n\nDOCUMENTO FICTÍCIO - dados sintéticos para teste do MediFlow (Equipo 22). Sem validade clínica.\n"
+  }
+}

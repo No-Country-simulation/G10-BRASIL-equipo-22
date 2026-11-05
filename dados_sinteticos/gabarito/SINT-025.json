@@ -1,0 +1,48 @@
+{
+  "documento_id": "SINT-025",
+  "classificacao": {
+    "tipo_documento": "Laudo de Exame de Imagem",
+    "especialidade": "Radiologia / Pneumologia",
+    "nivel_prioridade": "Urgente"
+  },
+  "dados_extraidos": {
+    "paciente": {
+      "nome": null,
+      "idade": 58
+    },
+    "medico_solicitante": {
+      "nome": "Dr. Gustavo Antunes Pacheco",
+      "crm": "47302-PR"
+    },
+    "exame_realizado": "Angiotomografia de tórax",
+    "exames_solicitados": [],
+    "diagnostico_principal": "Tromboembolismo pulmonar agudo segmentar à esquerda",
+    "cid_sugerido": "I26.9",
+    "medicamentos": []
+  },
+  "decisao_roteamento": {
+    "destino_principal": "Fila_Emergencia_Medica",
+    "requer_auditoria_humana": true,
+    "notificacao_gerada": {
+      "canal": "Alerta_Plantao_Medico"
+    }
+  },
+  "_avaliacao": {
+    "cenario": "urgencia",
+    "formato": "pdf_escaneado",
+    "degradacao": "scan_leve",
+    "arquivo": "documentos/SINT-025.pdf",
+    "tipo_arquivo": "PDF",
+    "canal_origem": "Pronto_Socorro",
+    "motivo": "TEP agudo sem nome do paciente: alerta ao plantão já, e revisão humana em paralelo.",
+    "armadilha": "Urgente e incompleto ao mesmo tempo. A urgência vem primeiro.",
+    "cid_aceitos": [
+      "I26.9"
+    ],
+    "campos_ausentes": [
+      "paciente.nome"
+    ],
+    "decisao_pendente": "No grafo do README a checagem de urgência vem antes e o ramo de emergência não marca revisão humana. Proposta: o ramo de emergência também marca requer_auditoria_humana quando falta dado obrigatório (o plantão identifica pelo número de atendimento).",
+    "transcricao": "Hospital Aurora do Vale - Serviço de Radiologia\nRua Brigadeiro Franco, 3100 - Curitiba/PR - Tel. (41) 3000-0100\n\nLAUDO DE TOMOGRAFIA COMPUTADORIZADA\n\nPaciente:\nIdade: 58 anos\nAtendimento: 2026-PS-08833\nSolicitante: Dr. Gustavo Antunes Pacheco - CRM-PR 47302\nData do exame: 22/10/2026\n\nANGIOTOMOGRAFIA DE TÓRAX (PROTOCOLO PARA TROMBOEMBOLISMO PULMONAR)\nIndicação clínica: dispneia e taquicardia de início súbito; trombose venosa profunda na perna esquerda diagnosticada há 2 dias.\n\nACHADOS\nFalhas de enchimento em ramos segmentares e subsegmentares do lobo inferior esquerdo. Ventrículo direito de dimensões normais. Sem derrame pleural.\n\nIMPRESSÃO DIAGNÓSTICA\nTromboembolismo pulmonar agudo segmentar à esquerda, sem sinais de sobrecarga ventricular direita.\nResultado crítico comunicado ao médico assistente às 16h50.\n\nDra. Luísa Fontana Ribeiro\nRadiologia e Diagnóstico por Imagem - CRM-PR 27309\n\nDOCUMENTO FICTÍCIO - dados sintéticos para teste do MediFlow (Equipo 22). Sem validade clínica.\n"
+  }
+}

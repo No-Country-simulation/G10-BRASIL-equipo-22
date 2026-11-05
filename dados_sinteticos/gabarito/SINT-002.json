@@ -1,0 +1,58 @@
+{
+  "documento_id": "SINT-002",
+  "classificacao": {
+    "tipo_documento": "Receituário Médico",
+    "especialidade": "Medicina de Família e Comunidade",
+    "nivel_prioridade": "Rotina"
+  },
+  "dados_extraidos": {
+    "paciente": {
+      "nome": "Ana Beatriz Kowalski",
+      "idade": 34
+    },
+    "medico_solicitante": {
+      "nome": "Dra. Camila Duarte Viana",
+      "crm": "71655-MG"
+    },
+    "exame_realizado": null,
+    "exames_solicitados": [],
+    "diagnostico_principal": "Sinusite aguda",
+    "cid_sugerido": "J01.9",
+    "medicamentos": [
+      {
+        "nome": "Amoxicilina",
+        "dosagem": "500 mg",
+        "via": "oral",
+        "posologia": "1 cápsula de 8 em 8 horas por 7 dias"
+      },
+      {
+        "nome": "Dipirona monoidratada",
+        "dosagem": "500 mg",
+        "via": "oral",
+        "posologia": "1 comprimido de 6 em 6 horas se dor ou febre"
+      }
+    ]
+  },
+  "decisao_roteamento": {
+    "destino_principal": "Farmacia_Hospitalar",
+    "requer_auditoria_humana": false,
+    "notificacao_gerada": null
+  },
+  "_avaliacao": {
+    "cenario": "rotina",
+    "formato": "texto",
+    "degradacao": "nenhuma",
+    "arquivo": "documentos/SINT-002.json",
+    "tipo_arquivo": "TEXTO",
+    "canal_origem": "Ambulatorio",
+    "motivo": "Receita completa com diagnóstico e CID escritos.",
+    "armadilha": null,
+    "cid_aceitos": [
+      "J01.9",
+      "J01"
+    ],
+    "campos_ausentes": [],
+    "decisao_pendente": null,
+    "transcricao": "Unidade Básica de Saúde Vila Esperança\nRua Itaúna, 450 - Belo Horizonte/MG\n\nRECEITUÁRIO SIMPLES\n\nPaciente: Ana Beatriz Kowalski\nIdade: 34 anos\nData: 08/10/2026\n\nUSO ORAL\n1. Amoxicilina 500 mg cápsula - 21 cápsulas\n   Tomar 1 cápsula de 8 em 8 horas por 7 dias.\n2. Dipirona monoidratada 500 mg comprimido - 10 comprimidos\n   Tomar 1 comprimido de 6 em 6 horas se dor ou febre.\nDiagnóstico: sinusite aguda (CID-10 J01.9).\n\nBelo Horizonte, 8 de outubro de 2026\nDra. Camila Duarte Viana\nMedicina de Família e Comunidade - CRM-MG 71655\n\nDOCUMENTO FICTÍCIO - dados sintéticos para teste do MediFlow (Equipo 22). Sem validade clínica.\n"
+  }
+}

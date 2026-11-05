@@ -1,0 +1,48 @@
+{
+  "documento_id": "SINT-024",
+  "classificacao": {
+    "tipo_documento": "Atestado Médico",
+    "especialidade": "Clínica Médica",
+    "nivel_prioridade": "Rotina"
+  },
+  "dados_extraidos": {
+    "paciente": {
+      "nome": "Felipe Augusto Rocha",
+      "idade": null
+    },
+    "medico_solicitante": {
+      "nome": "Dra. Regina Kfouri Matos",
+      "crm": null
+    },
+    "exame_realizado": null,
+    "exames_solicitados": [],
+    "diagnostico_principal": null,
+    "cid_sugerido": null,
+    "medicamentos": [],
+    "dias_afastamento": null
+  },
+  "decisao_roteamento": {
+    "destino_principal": "Fila_Revisao_Humana",
+    "requer_auditoria_humana": true,
+    "notificacao_gerada": null
+  },
+  "_avaliacao": {
+    "cenario": "ambiguo",
+    "formato": "imagem",
+    "degradacao": "scan_leve",
+    "arquivo": "documentos/SINT-024.jpg",
+    "tipo_arquivo": "IMAGEM",
+    "canal_origem": "Ambulatorio",
+    "motivo": "Número de dias rasurado e CRM borrado no carimbo: atestado rasurado não pode ser aceito sem confirmação.",
+    "armadilha": null,
+    "cid_aceitos": [
+      null
+    ],
+    "campos_ausentes": [
+      "dias_afastamento (rasurado: 2 ou 12)",
+      "medico_solicitante.crm (borrado no carimbo)"
+    ],
+    "decisao_pendente": null,
+    "transcricao": "Pronto Atendimento Vila Ipê\nRua Ipê Roxo, 77 - Curitiba/PR\n\nATESTADO MÉDICO\n\nAtesto, para os devidos fins, que o(a) Sr.(a)\nFelipe Augusto Rocha\nesteve sob meus cuidados profissionais nesta data, devendo\nafastar-se de suas atividades pelo período de\n[rasura] dias\na partir desta data.\n\nCuritiba, 22/10/2026\nCarimbo: Dra. Regina Kfouri Matos / Clínica Médica / [ilegível]\n\nDOCUMENTO FICTÍCIO - dados sintéticos para teste do MediFlow (Equipo 22). Sem validade clínica.\n"
+  }
+}

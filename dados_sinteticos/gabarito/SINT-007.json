@@ -1,0 +1,54 @@
+{
+  "documento_id": "SINT-007",
+  "classificacao": {
+    "tipo_documento": "Relatório de Alta",
+    "especialidade": "Clínica Médica",
+    "nivel_prioridade": "Rotina"
+  },
+  "dados_extraidos": {
+    "paciente": {
+      "nome": "Antônio Carlos Wisniewski",
+      "idade": 72
+    },
+    "medico_solicitante": {
+      "nome": "Dr. Otávio Sampaio Reis",
+      "crm": "45120-PR"
+    },
+    "exame_realizado": null,
+    "exames_solicitados": [
+      "Radiografia de tórax de controle"
+    ],
+    "diagnostico_principal": "Pneumonia adquirida na comunidade",
+    "cid_sugerido": "J18.9",
+    "medicamentos": [
+      {
+        "nome": "Amoxicilina + clavulanato de potássio",
+        "dosagem": "875 mg + 125 mg",
+        "via": "oral",
+        "posologia": "1 comprimido de 12 em 12 horas por 3 dias"
+      }
+    ]
+  },
+  "decisao_roteamento": {
+    "destino_principal": "Prontuario_Eletronico",
+    "requer_auditoria_humana": false,
+    "notificacao_gerada": null
+  },
+  "_avaliacao": {
+    "cenario": "rotina",
+    "formato": "pdf_digital",
+    "degradacao": "nenhuma",
+    "arquivo": "documentos/SINT-007.pdf",
+    "tipo_arquivo": "PDF",
+    "canal_origem": "Internacao",
+    "motivo": "Alta de rotina, paciente estável.",
+    "armadilha": "O resumo cita febre, dispneia e saturação de 91% na admissão; na alta o paciente está estável. Sintoma passado não é urgência.",
+    "cid_aceitos": [
+      "J18.9",
+      "J18"
+    ],
+    "campos_ausentes": [],
+    "decisao_pendente": null,
+    "transcricao": "Hospital Aurora do Vale\nRua Brigadeiro Franco, 3100 - Curitiba/PR - Tel. (41) 3000-0100\n\nRELATÓRIO DE ALTA HOSPITALAR\n\nPaciente: Antônio Carlos Wisniewski\nIdade: 72 anos\nProntuário: 0048213\nUnidade: Clínica Médica - 3º andar\nInternação: 01/10/2026\nAlta: 06/10/2026\n\nDIAGNÓSTICO PRINCIPAL\nPneumonia adquirida na comunidade (CID-10 J18.9).\n\nCOMORBIDADES\nDoença pulmonar obstrutiva crônica (J44.9); hipertensão arterial sistêmica (I10).\n\nRESUMO DA INTERNAÇÃO\nPaciente admitido pelo pronto-socorro com febre (38,6 °C), tosse produtiva e dispneia, com saturação de oxigênio de 91% em ar ambiente. Radiografia de tórax com consolidação em lobo inferior direito. Recebeu ceftriaxona e azitromicina por via endovenosa, com boa resposta clínica, e passou para antibiótico oral no 4º dia.\n\nCONDIÇÕES DE ALTA\nAlta em bom estado geral, afebril há 72 horas, eupneico, saturação de 95% em ar ambiente.\n\nPRESCRIÇÃO DE ALTA\n1. Amoxicilina + clavulanato de potássio 875 mg + 125 mg - 6 comprimidos\n   Tomar 1 comprimido de 12 em 12 horas por mais 3 dias.\nManter as medicações de uso contínuo já prescritas.\n\nORIENTAÇÕES\nRetorno ao ambulatório de clínica médica em 15 dias, com radiografia de tórax de controle. Procurar o pronto-socorro em caso de febre, piora da falta de ar ou dor no peito.\n\nCuritiba, 6 de outubro de 2026\nDr. Otávio Sampaio Reis\nClínica Médica - CRM-PR 45120\n\nDOCUMENTO FICTÍCIO - dados sintéticos para teste do MediFlow (Equipo 22). Sem validade clínica.\n"
+  }
+}

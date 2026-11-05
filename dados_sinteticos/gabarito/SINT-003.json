@@ -1,0 +1,45 @@
+{
+  "documento_id": "SINT-003",
+  "classificacao": {
+    "tipo_documento": "Laudo de Exame Laboratorial",
+    "especialidade": "Patologia Clínica",
+    "nivel_prioridade": "Rotina"
+  },
+  "dados_extraidos": {
+    "paciente": {
+      "nome": "Marcos Vinícius Ferreira",
+      "idade": 45
+    },
+    "medico_solicitante": {
+      "nome": "Dra. Marina Albuquerque Teles",
+      "crm": "38214-PR"
+    },
+    "exame_realizado": "Hemograma completo",
+    "exames_solicitados": [],
+    "diagnostico_principal": null,
+    "cid_sugerido": null,
+    "medicamentos": []
+  },
+  "decisao_roteamento": {
+    "destino_principal": "Prontuario_Eletronico",
+    "requer_auditoria_humana": false,
+    "notificacao_gerada": null
+  },
+  "_avaliacao": {
+    "cenario": "rotina",
+    "formato": "pdf_digital",
+    "degradacao": "nenhuma",
+    "arquivo": "documentos/SINT-003.pdf",
+    "tipo_arquivo": "PDF",
+    "canal_origem": "Laboratorio",
+    "motivo": "Hemograma normal, completo e identificado.",
+    "armadilha": "Duas médicas no laudo: a solicitante (Dra. Marina) e a responsável técnica que assina (Dra. Patrícia). medico_solicitante é a Dra. Marina.",
+    "cid_aceitos": [
+      null,
+      "Z00.0"
+    ],
+    "campos_ausentes": [],
+    "decisao_pendente": null,
+    "transcricao": "Laboratório Vitalis Análises Clínicas\nAv. Sete de Setembro, 4000 - Curitiba/PR - Responsável técnica: Dra. Patrícia Moura Cavalcanti - CRM-PR 33908\n\nLAUDO DE EXAMES LABORATORIAIS\n\nPaciente: Marcos Vinícius Ferreira\nIdade: 45 anos\nSexo: Masculino\nAtendimento: 2026-100734\nSolicitante: Dra. Marina Albuquerque Teles - CRM-PR 38214\nData da coleta: 07/10/2026\n\nHEMOGRAMA COMPLETO\nMaterial: sangue total (EDTA). Método: citometria de fluxo automatizada.\nExame | Resultado | Unidade | Valores de referência\nHemácias | 5,02 | milhões/mm³ | 4,50 a 5,90\nHemoglobina | 15,1 | g/dL | 13,5 a 17,5\nHematócrito | 44,8 | % | 41,0 a 53,0\nVCM | 89,2 | fL | 80,0 a 100,0\nHCM | 30,1 | pg | 26,0 a 34,0\nCHCM | 33,7 | g/dL | 31,0 a 36,0\nRDW | 12,9 | % | 11,5 a 14,5\nLeucócitos | 6.800 | /mm³ | 4.000 a 11.000\nNeutrófilos | 58 | % | 40 a 75\nLinfócitos | 31 | % | 20 a 45\nMonócitos | 7 | % | 2 a 10\nEosinófilos | 3 | % | 1 a 6\nBasófilos | 1 | % | 0 a 2\nPlaquetas | 245.000 | /mm³ | 150.000 a 450.000\nLiberado em 07/10/2026 às 16h42.\n\nDra. Patrícia Moura Cavalcanti\nPatologia Clínica - CRM-PR 33908\n\nDOCUMENTO FICTÍCIO - dados sintéticos para teste do MediFlow (Equipo 22). Sem validade clínica.\n"
+  }
+}

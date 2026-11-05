@@ -1,0 +1,49 @@
+{
+  "documento_id": "SINT-013",
+  "classificacao": {
+    "tipo_documento": "Laudo de Exame Laboratorial",
+    "especialidade": "Patologia Clínica",
+    "nivel_prioridade": "Urgente"
+  },
+  "dados_extraidos": {
+    "paciente": {
+      "nome": "Iracema Batista Souza",
+      "idade": 68
+    },
+    "medico_solicitante": {
+      "nome": "Dr. Diego Hoffmann Leal",
+      "crm": "50211-PR"
+    },
+    "exame_realizado": "Potássio, sódio, ureia e creatinina",
+    "exames_solicitados": [],
+    "diagnostico_principal": null,
+    "cid_sugerido": null,
+    "medicamentos": []
+  },
+  "decisao_roteamento": {
+    "destino_principal": "Fila_Emergencia_Medica",
+    "requer_auditoria_humana": false,
+    "notificacao_gerada": {
+      "canal": "Alerta_Plantao_Medico"
+    }
+  },
+  "_avaliacao": {
+    "cenario": "urgencia",
+    "formato": "pdf_escaneado",
+    "degradacao": "scan_leve",
+    "arquivo": "documentos/SINT-013.pdf",
+    "tipo_arquivo": "PDF",
+    "canal_origem": "Laboratorio",
+    "motivo": "Potássio de 6,9 mEq/L: risco de arritmia grave.",
+    "armadilha": "Não há diagnóstico escrito: a urgência vem do valor crítico na tabela.",
+    "cid_aceitos": [
+      null,
+      "E87.5",
+      "N17.9",
+      "N18.9"
+    ],
+    "campos_ausentes": [],
+    "decisao_pendente": null,
+    "transcricao": "Laboratório Vitalis Análises Clínicas\nAv. Sete de Setembro, 4000 - Curitiba/PR - Responsável técnica: Dra. Patrícia Moura Cavalcanti - CRM-PR 33908\n\nLAUDO DE EXAMES LABORATORIAIS\n\nPaciente: Iracema Batista Souza\nIdade: 68 anos\nSexo: Feminino\nAtendimento: 2026-101402\nSolicitante: Dr. Diego Hoffmann Leal - CRM-PR 50211\nData da coleta: 16/10/2026\n\nBIOQUÍMICA\nExame | Resultado | Unidade | Valores de referência\nPotássio | 6,9 | mEq/L | 3,5 a 5,1\nSódio | 136 | mEq/L | 136 a 145\nUreia | 118 | mg/dL | 15 a 45\nCreatinina | 3,8 | mg/dL | 0,6 a 1,1\nVALOR CRÍTICO: potássio 6,9 mEq/L. Resultado confirmado em segunda dosagem e comunicado por telefone à unidade solicitante em 16/10/2026, às 09h12.\n\nDra. Patrícia Moura Cavalcanti\nPatologia Clínica - CRM-PR 33908\n\nDOCUMENTO FICTÍCIO - dados sintéticos para teste do MediFlow (Equipo 22). Sem validade clínica.\n"
+  }
+}
