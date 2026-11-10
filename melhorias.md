@@ -29,6 +29,10 @@
 | **MEL-015** | 2026-11-03 | **DevOps & CI/CD** | **Pipeline Automatizado GitHub Actions (`.github/workflows/ci.yml`)**: compilação, validação sintática e execução automática de 16 testes pytest a cada push/PR. | Blindagem de regressões e entrega contínua com qualidade garantida. |
 | **MEL-016** | 2026-11-03 | **Observabilidade SRE** | **Motor de Telemetria Estatística de Produção (`week4/telemetry_sre.py`)**: cálculo de percentis p50/p75/p90/p95/p99, taxa de cumprimento de SLA (< 5s) e Error Budget (alvo 99.9%). | Visibilidade executiva de nível empresarial sobre a estabilidade do agente. |
 | **MEL-017** | 2026-11-03 | **Confiabilidade & Carga** | **Motor de Benchmark de Concorrência e Stress Burst (`week4/load_testing.py`)**: execução paralela de 10 a 50 admissões clínicas simultâneas com throughput de 85 req/s. | Comprova que o LangGraph suporta picos de pronto-socorro sem travamento ou degradação. |
+| **MEL-018** | 2026-11-09 | **Ingestão Multimodal** | **Ingestão Multimodal Desacoplada Conectada ao Grafo (`mediflow_ingestao.py`)**: suporte a arquivos texto, JSON, PDF (`pypdf`) e imagens clínicas (`Pillow`) conectados nativamente ao `ingestor_node` do LangGraph (PR #58 por Fernando Szekut). | Elimina barreiras de formato na admissão hospitalar, permitindo triagem universal. |
+| **MEL-019** | 2026-11-09 | **UX & Notificações** | **Dispatcher Confiável & Componente Visual de Alerta do Plantão Médico no Streamlit**: integração de banners pulsantes de urgência imediata para TEP/IAM acionados via Webhook (PR #59 por Fernando Szekut). | Visibilidade imediata em tempo real para equipes médicas de emergência. |
+| **MEL-020** | 2026-11-09 | **Resiliência Clínica** | **Priorização Crítica Tolerante a Dados Faltantes**: regra de negócio que força o disparo de alertas vitais do plantão mesmo se campos cadastrais secundários (como CRM ou convênio) estiverem omissos (PR #60 por Fernando Szekut). | Princípio de preservação da vida: nenhum paciente crítico deixa de ser atendido por falha burocrática. |
+| **MEL-021** | 2026-11-09 | **Observabilidade & SRE** | **Histórico de Entregas de Webhooks com Latência HTTP e Reenvio Manual**: registro detalhado de cada disparo com telemetria de latência HTTP e botão para reenvio manual pelo médico/auditor (PR #61 por Fernando Szekut). | Rastreabilidade operacional de ponta a ponta e recuperação instantânea em instabilidades de rede. |
 
 ---
 
@@ -36,7 +40,7 @@
 
 ### 2.1 Performance & IA
 - [ ] **Otimização de Prompt e Token Caching**: Reduzir o número de tokens do system prompt para diminuir a latência média da NVIDIA NIM de ~5s para $< 2\text{s}$.
-- [ ] **Conversor Automático de PDF para Imagem**: Usar `pypdf` + `Pillow` para converter a primeira página de PDFs digitalizados em imagem Base64, enviando diretamente para a visão multimodal do Llama 3.2.
+- [x] **Conversor Automático e Ingestão Multimodal (PDF/Imagem)**: Implementado via `mediflow_ingestao.py` com `pypdf` e `Pillow` conectado ao nó de ingestão.
 - [ ] **Suporte a Múltiplos Provedores de LLM**: Chave seletora rápida entre NVIDIA NIM, Google Gemini Flash e Groq Cloud via variável `AI_PROVIDER`.
 
 ### 2.2 Persistência e Dados (OCI Always Free)
@@ -46,7 +50,7 @@
 ### 2.3 Interface e Human-in-the-Loop (Streamlit / FastAPI)
 - [ ] **Visualizador de PDF/Imagem Lado a Lado no Streamlit**: Exibir a imagem do documento original ao lado do formulário de auditoria na Aba HitL.
 - [ ] **Filtro de Fila por Gravidade**: Permitir que auditores priorizem a análise de documentos marcados com suspeita de urgência clínica.
-- [ ] **Notificação Real-Time (Webhooks)**: Envio de alertas de casos urgentes (TEP / IAM) para canais externos como Slack ou Discord.
+- [x] **Notificação Real-Time (Webhooks) com Histórico & Retry**: Implementado em `week3/notifications.py`, `app.py` com registro de latência e retentativa manual.
 
 ### 2.4 Diferenciais Competitivos (Edital ONE G10)
 - [ ] **Editor de Regras de Triagem sem Código**: Interface onde o diretor clínico pode cadastrar novas palavras-chave de urgência e seus destinos sem alterar o código Python.

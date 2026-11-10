@@ -2,8 +2,8 @@
 **Project:** MediFlow — Agente Autônomo para Triagem, Extração e Roteamento de Documentos Clínicos  
 **Initiative:** Hackathon ONE G10 — Oracle Next Education & Alura  
 **Team / Squad:** Equipo 22  
-**Current Milestone:** Core Specification v0.1  
-**Last Updated:** 2026-10-23  
+**Current Milestone:** Release 1.4 Consolidada na Branch Main (Semanas 1 a 4 Concluídas)  
+**Last Updated:** 2026-11-09  
 
 ---
 
@@ -129,41 +129,46 @@ MediFlow is an intelligent autonomous agent that:
 
 ## 5. Execution Roadmap & Deliverables Tracker
 
-### Milestone 1: Planning & Specifications (Current - v0.1)
+### Milestone 1: Planning & Specifications (v0.1)
 - [x] Analyze `medflow.md` specifications and extract requirements.
 - [x] Create persistent memory file (`memory.md`).
 - [x] Author Core Specification v0.1 in `README.md` (EN-US, PT-BR, and ES).
 - [x] Configure `.gitignore` to protect internal memory/plan files.
 - [x] Add standard MIT License.
 
-### Milestone 2: Core Data Models & LLM Extraction Engine
-- [ ] Implement Pydantic models for Document Input, Clinical Entity Extraction, and Triage Output.
-- [ ] Implement Multimodal Ingestion Module (PDF/image parser, base64 / text normalization).
-- [ ] Configure Gemini / LLM prompts with few-shot clinical examples and structured output schema.
-- [ ] Implement Confidence Score Calculation heuristic and CID-10 mapping.
+### Milestone 2: Core Data Models & LLM Extraction Engine (v1.0 - Concluído)
+- [x] Implement Pydantic models for Document Input, Clinical Entity Extraction, and Triage Output (`mediflow_schemas.py`).
+- [x] Implement Multimodal Ingestion Module (PDF/image parser, base64 / text normalization via `mediflow_ingestao.py`).
+- [x] Configure Gemini / NVIDIA NIM prompts with few-shot clinical examples and structured output schema.
+- [x] Implement Confidence Score Calculation heuristic and CID-10 mapping.
 
-### Milestone 3: Decision Graph & Agent Workflow
-- [ ] Define LangGraph State schema.
-- [ ] Implement conditional routing nodes:
+### Milestone 3: Decision Graph & Agent Workflow (v1.3 - Concluído)
+- [x] Define LangGraph State schema (`MediFlowAgentState` TypedDict).
+- [x] Implement conditional routing nodes (`week3/agent.py`):
   - Standard Routine Flow (Low risk, High confidence -> Pep/PEP Archive / Farmacia / Auditoria)
   - Urgency Flow (Critical findings / TEP / Infarct -> Fila Emergência / Alerta Plantão)
   - Human-in-the-Loop Fallback (Low confidence < 0.85 / Missing data -> Fila Revisão Humana)
-- [ ] Unit tests for the 3 mandatory evaluation scenarios.
+- [x] Unit tests for the 3 mandatory evaluation scenarios (8 testes passando no `pytest`).
+- [x] Webhook real-time alert dispatcher with plantão médico notifications (`week3/notifications.py`).
 
-### Milestone 4: OCI Object Storage Integration
-- [ ] Configure OCI SDK / REST integration using OCI Always Free configuration.
-- [ ] Implement bucket segregation:
+### Milestone 4: OCI Object Storage Integration & SRE CI/CD (v1.4 - Concluído)
+- [x] Configure OCI SDK / REST integration using OCI Always Free configuration (`week3/storage.py`, `oci_storage.py`).
+- [x] Implement bucket segregation:
   - `mediflow-documentos-clinicos/recebidos/`
   - `mediflow-documentos-clinicos/processados/rotina/`
   - `mediflow-documentos-clinicos/processados/urgentes/`
   - `mediflow-documentos-clinicos/auditoria_humana/`
-- [ ] Implement fallback mock storage for offline/local development.
+- [x] Implement fallback mock storage for offline/local development.
+- [x] Production SRE Telemetry engine with latency percentiles (p50..p99) and 99.9% error budget (`week4/telemetry_sre.py`).
+- [x] Concurrency load testing suite for 10, 25, 50 simultaneous bursts (`week4/load_testing.py`).
+- [x] CI/CD Pipeline via GitHub Actions (`ci/ci.yml`).
 
-### Milestone 5: UI & Auditor Dashboard (HitL)
-- [ ] Build Streamlit / FastAPI interface for document ingestion and real-time triage visualization.
-- [ ] Build Human-in-the-Loop review screen allowing one-click approval/rejection and field correction.
+### Milestone 5: UI & Auditor Dashboard (HitL) (v1.4 - Concluído)
+- [x] Build Streamlit / FastAPI interface for document ingestion and real-time triage visualization (`app.py`, `week3/app.py`).
+- [x] Build Human-in-the-Loop review screen allowing one-click approval/rejection and field correction.
+- [x] Visual emergency alerts and webhook delivery latency history with manual resend (PRs #59, #60, #61).
 
-### Milestone 6: Final Validation, Demonstration & Submission
+### Milestone 6: Final Validation, Demonstration & Submission (Sprint M6 - Em Andamento)
 - [ ] End-to-end testing with sample clinical PDFs and images.
 - [ ] Record demonstration videos and document test cases in `README.md`.
 - [ ] Final repository readiness check for ONE G10 submission.
@@ -272,4 +277,22 @@ MediFlow is an intelligent autonomous agent that:
   - Built comprehensive 8-test suite in [`week4/test_week4.py`](file:///home/magno/ONE/week4/test_week4.py) (100% pass rate in 1.47s) and standalone CLI runner [`week4/run_week4_tests.py`](file:///home/magno/ONE/week4/run_week4_tests.py).
   - Documented release in [`week4/README.md`](file:///home/magno/ONE/week4/README.md).
 - **Status:** Week 4 SRE, CI/CD, and Concurrency Load deliverables completed and validated.
+
+### [2026-11-04] — Sprint M3 Closure: 14/14 Cards Homologados no GitHub
+- **Author:** Carlos Magno (Tech Lead & SRE) / Pair Programming Assistant
+- **Actions Completed:**
+  - Homologou e fechou todos os 10 cards restantes da Semana 3 no repositório GitHub (`#6`, `#13` a `#21`).
+  - Atribuiu os pareceres técnicos formais registrando a data limite da sprint (30/10/2026) e vinculando os arquivos implementados em `week3/` para cada integrante da squad (@FSzekut, @HelderAmaralConsult, @superjonic).
+  - Concluiu oficialmente 100% dos cards da Sprint M3 (14 de 14).
+- **Status:** Sprint M3 formalmente encerrada no GitHub Projects e Issues.
+
+### [2026-11-09] — Release 1.4: Integração de PRs da Squad e Promoção para a Main
+- **Author:** Carlos Magno (Tech Lead & SRE) / Fernando Szekut / Pair Programming Assistant
+- **Actions Completed:**
+  - Fernando Szekut abriu 4 Pull Requests cobrindo ingestão multimodal, despachador confiável de webhooks, resiliência para casos clínicos de urgência e histórico com retry manual (`PR #58`, `PR #59`, `PR #60`, `PR #61`).
+  - Carlos Magno revisou, aprovou e mesclou as 4 PRs na branch `release-1.4`.
+  - Promoveu e unificou a branch `release-1.4` diretamente na branch principal (`main`).
+  - Atualizou os registros de construção, memória e governança (`README.md`, `memory.md`, `melhorias.md`).
+- **Status:** Branch `main` 100% sincronizada com todas as entregas das Semanas 1 a 4.
+
 
