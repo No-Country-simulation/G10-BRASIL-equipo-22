@@ -33,6 +33,8 @@
 | **MEL-019** | 2026-11-09 | **UX & Notificações** | **Dispatcher Confiável & Componente Visual de Alerta do Plantão Médico no Streamlit**: integração de banners pulsantes de urgência imediata para TEP/IAM acionados via Webhook (PR #59 por Fernando Szekut). | Visibilidade imediata em tempo real para equipes médicas de emergência. |
 | **MEL-020** | 2026-11-09 | **Resiliência Clínica** | **Priorização Crítica Tolerante a Dados Faltantes**: regra de negócio que força o disparo de alertas vitais do plantão mesmo se campos cadastrais secundários (como CRM ou convênio) estiverem omissos (PR #60 por Fernando Szekut). | Princípio de preservação da vida: nenhum paciente crítico deixa de ser atendido por falha burocrática. |
 | **MEL-021** | 2026-11-09 | **Observabilidade & SRE** | **Histórico de Entregas de Webhooks com Latência HTTP e Reenvio Manual**: registro detalhado de cada disparo com telemetria de latência HTTP e botão para reenvio manual pelo médico/auditor (PR #61 por Fernando Szekut). | Rastreabilidade operacional de ponta a ponta e recuperação instantânea em instabilidades de rede. |
+| **MEL-022** | 2026-11-10 | **Resiliência SRE** | **Motor de Circuit-Breaker SRE e Cliente Desacoplado Streamlit/FastAPI (`mediflow_circuit_breaker.py`)**: estados canônicos (CLOSED, OPEN, HALF_OPEN), limiar de falhas, arrefecimento e chaveamento automático para motor LangGraph in-process (PR #62 / CARD-25 por Carlos Magno). | Proteção contra falhas em cascata com Zero Downtime em caso de queda ou lentidão da API backend. |
+
 
 ---
 
