@@ -23,6 +23,7 @@ import streamlit as st  # type: ignore
 ROOT_DIR = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT_DIR))
 
+from mediflow_circuit_breaker import CircuitBreakerState, ResilientMediFlowClient
 from mediflow_schemas import (
     DocumentoClinicoInput,
     DestinoRoteamentoEnum,
@@ -49,7 +50,8 @@ def get_services():
         storage_service=storage,
         notification_dispatcher=dispatcher,
     )
-    return storage, dispatcher, agent
+    client = ResilientMediFlowClient(local_agent=agent)
+    return storage, dispatcher, agent, client
 
 
 def main():
@@ -60,7 +62,7 @@ def main():
         initial_sidebar_state="expanded",
     )
 
-    storage, dispatcher, agent = get_services()
+    storage, dispatcher, agent, client = get_services()
 
     # Cabeçalho Principal
     st.title("🏥 MediFlow — Release 1.3: Grafo de Decisão Condicional & Workflows")
@@ -82,6 +84,26 @@ def main():
             "• **Helder** *(OCI & SQLite Audit)*  \n"
             "• **Alessandro** *(FastAPI Backend & QA)*"
         )
+        st.markdown("---")
+        st.subheader("🛡️ Circuit-Breaker SRE")
+        cb_metrics = client.breaker.get_metrics()
+        cb_state = cb_metrics["state"]
+
+        if cb_state == CircuitBreakerState.CLOSED.value:
+            st.success(f"🟢 **Circuito: {cb_state}**\n\nRequisições fluem para a API FastAPI.")
+        elif cb_state == CircuitBreakerState.OPEN.value:
+            st.error(f"🔴 **Circuito: {cb_state}**\n\nContingência local in-process ativa (Zero Downtime).")
+        else:
+            st.warning(f"🟡 **Circuito: {cb_state}**\n\nSondando recuperação do backend.")
+
+        c1, c2 = st.columns(2)
+        c1.metric("Total Chamadas", cb_metrics["total_calls"])
+        c2.metric("Fallbacks SRE", cb_metrics["fallback_calls"])
+
+        if st.button("🔄 Resetar Circuito", key="btn_reset_cb"):
+            client.breaker.reset()
+            st.rerun()
+
         st.markdown("---")
         compliance = storage.check_always_free_compliance()
         st.caption(f"☁️ **OCI Storage:** `{storage.bucket_name}`")
@@ -141,8 +163,20 @@ def main():
                     documento_texto=texto,
                     canal_origem=canal,
                 )
-                with st.spinner("Executando nós do LangGraph StateGraph..."):
-                    resultado = agent.run(payload)
+                with st.spinner("Processando via cliente resiliente (Circuit-Breaker)..."):
+                    resultado, meta = client.processar_triagem(payload)
+
+                # Notificação de status do Circuit-Breaker SRE
+                if meta.get("origem") == "fallback_local_in_process":
+                    st.warning(
+                        f"⚡ **Modo de Contingência SRE Ativo (Circuit-Breaker: {meta.get('status_circuito')})**\n\n"
+                        f"{meta.get('aviso')} — Latência: **{meta.get('latencia_ms')} ms**"
+                    )
+                else:
+                    st.info(
+                        f"🌐 **Processado via API REST FastAPI** ({meta.get('url')}) — "
+                        f"Latência HTTP: **{meta.get('latencia_ms')} ms**"
+                    )
 
                 prioridade = resultado.classificacao.nivel_prioridade.value
                 confianca = resultado.classificacao.score_confianca_classificacao
