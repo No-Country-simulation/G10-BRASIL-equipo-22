@@ -2,8 +2,8 @@
 **Project:** MediFlow — Agente Autônomo para Triagem, Extração e Roteamento de Documentos Clínicos  
 **Initiative:** Hackathon ONE G10 — Oracle Next Education & Alura  
 **Team / Squad:** Equipo 22  
-**Current Milestone:** Release 1.4 Consolidada na Branch Main (Semanas 1 a 4 Concluídas)  
-**Last Updated:** 2026-11-09  
+**Current Milestone:** Release 1.5 — Sprint M5 (CARD-25 Entregue, 102 Testes, Circuit-Breaker SRE)  
+**Last Updated:** 2026-11-10  
 
 ---
 
@@ -285,6 +285,20 @@ MediFlow is an intelligent autonomous agent that:
   - Atribuiu os pareceres técnicos formais registrando a data limite da sprint (30/10/2026) e vinculando os arquivos implementados em `week3/` para cada integrante da squad (@FSzekut, @HelderAmaralConsult, @superjonic).
   - Concluiu oficialmente 100% dos cards da Sprint M3 (14 de 14).
 - **Status:** Sprint M3 formalmente encerrada no GitHub Projects e Issues.
+
+### [2026-11-10] — Sprint M5 / CARD-25: Circuit-Breaker SRE — PR #62 Merged na Main
+- **Author:** Carlos Magno (Tech Lead & SRE) / Pair Programming Assistant
+- **Actions Completed:**
+  - Implementou o motor de Circuit-Breaker SRE canônico em [`mediflow_circuit_breaker.py`](file:///home/magno/ONE/mediflow_circuit_breaker.py) com estados `CLOSED`, `OPEN` e `HALF_OPEN`, limiar de falhas configurável e janela de arrefecimento.
+  - Implementou `ResilientMediFlowClient`: chaveamento automático para o motor LangGraph in-process quando a API FastAPI backend está degradada — Zero Downtime garantido.
+  - Adicionou widget de status do Circuit-Breaker na sidebar do Streamlit (`app.py` e `week3/app.py`) com banner de contingência visual.
+  - Criou suite de 11 testes automatizados em [`tests/test_circuit_breaker.py`](file:///home/magno/ONE/tests/test_circuit_breaker.py) — cobertura de transições de estado, fallback, half-open, e integração FastAPI mock.
+  - Total de testes aprovados na `main`: **102 testes (100%)** em 10.36s.
+  - Branch `feat/circuit-breaker-rest` → PR #62 aberto e mesclado na `main` com `--merge --delete-branch`.
+  - Issue #34 (CARD-25) fechada automaticamente via merge do PR #62.
+  - Atualizado `README.md` para Release 1.5 (badge, capabilities, estrutura de repositório, contagem de testes).
+  - Registrado MEL-022 no `melhorias.md`.
+- **Status:** CARD-25 100% entregue. Branch `main` em Release 1.5 Sprint M5. Próximo: CARD-26 (`feat/otimizacao-latencia-inferencia`).
 
 ### [2026-11-09] — Release 1.4: Integração de PRs da Squad e Promoção para a Main
 - **Author:** Carlos Magno (Tech Lead & SRE) / Fernando Szekut / Pair Programming Assistant
