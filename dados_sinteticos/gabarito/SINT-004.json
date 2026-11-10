@@ -1,0 +1,46 @@
+{
+  "documento_id": "SINT-004",
+  "classificacao": {
+    "tipo_documento": "Laudo de Exame Laboratorial",
+    "especialidade": "Patologia Clínica",
+    "nivel_prioridade": "Rotina"
+  },
+  "dados_extraidos": {
+    "paciente": {
+      "nome": "Sueli Aparecida Nunes",
+      "idade": 58
+    },
+    "medico_solicitante": {
+      "nome": "Dr. Diego Hoffmann Leal",
+      "crm": "50211-PR"
+    },
+    "exame_realizado": "Glicose em jejum, hemoglobina glicada, creatinina e perfil lipídico",
+    "exames_solicitados": [],
+    "diagnostico_principal": "Diabetes mellitus tipo 2",
+    "cid_sugerido": "E11.9",
+    "medicamentos": []
+  },
+  "decisao_roteamento": {
+    "destino_principal": "Prontuario_Eletronico",
+    "requer_auditoria_humana": false,
+    "notificacao_gerada": null
+  },
+  "_avaliacao": {
+    "cenario": "rotina",
+    "formato": "pdf_escaneado",
+    "degradacao": "scan_leve",
+    "arquivo": "documentos/SINT-004.pdf",
+    "tipo_arquivo": "PDF",
+    "canal_origem": "Laboratorio",
+    "motivo": "Controle de diabetes com resultados fora da referência e sem valor crítico.",
+    "armadilha": "Valores alterados, mas nenhum crítico: alterado não é urgente.",
+    "cid_aceitos": [
+      "E11.9",
+      "E11",
+      null
+    ],
+    "campos_ausentes": [],
+    "decisao_pendente": null,
+    "transcricao": "Laboratório Vitalis Análises Clínicas\nAv. Sete de Setembro, 4000 - Curitiba/PR - Responsável técnica: Dra. Patrícia Moura Cavalcanti - CRM-PR 33908\n\nLAUDO DE EXAMES LABORATORIAIS\n\nPaciente: Sueli Aparecida Nunes\nIdade: 58 anos\nSexo: Feminino\nAtendimento: 2026-101187\nSolicitante: Dr. Diego Hoffmann Leal - CRM-PR 50211\nData da coleta: 09/10/2026\nInformação clínica: Diabetes mellitus tipo 2 em acompanhamento\n\nBIOQUÍMICA\nExame | Resultado | Unidade | Valores de referência\nGlicose em jejum | 142 | mg/dL | 70 a 99\nHemoglobina glicada (HbA1c) | 7,4 | % | Normal: abaixo de 5,7\nCreatinina | 0,9 | mg/dL | 0,6 a 1,1\nColesterol total | 198 | mg/dL | Desejável: abaixo de 190\nLDL-colesterol | 112 | mg/dL | Meta conforme risco cardiovascular\nHDL-colesterol | 46 | mg/dL | Acima de 40\nTriglicerídeos | 168 | mg/dL | Desejável: abaixo de 150\nValores fora da faixa de referência devem ser interpretados pelo médico assistente.\n\nDra. Patrícia Moura Cavalcanti\nPatologia Clínica - CRM-PR 33908\n\nDOCUMENTO FICTÍCIO - dados sintéticos para teste do MediFlow (Equipo 22). Sem validade clínica.\n"
+  }
+}

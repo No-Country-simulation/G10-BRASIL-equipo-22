@@ -1,0 +1,60 @@
+{
+  "documento_id": "SINT-018",
+  "classificacao": {
+    "tipo_documento": "Receituário Médico",
+    "especialidade": "Clínica Médica",
+    "nivel_prioridade": "Rotina"
+  },
+  "dados_extraidos": {
+    "paciente": {
+      "nome": "Edson Luiz Krüger",
+      "idade": null
+    },
+    "medico_solicitante": {
+      "nome": "Dr. Sílvio Ramos Bittencourt",
+      "crm": "44610-PR"
+    },
+    "exame_realizado": null,
+    "exames_solicitados": [],
+    "diagnostico_principal": null,
+    "cid_sugerido": null,
+    "medicamentos": [
+      {
+        "nome": "Amitriptilina",
+        "dosagem": "25 mg",
+        "via": "oral",
+        "posologia": "1 comprimido à noite"
+      },
+      {
+        "nome": null,
+        "dosagem": null,
+        "via": "oral",
+        "posologia": "1 comprimido 2 vezes ao dia"
+      }
+    ]
+  },
+  "decisao_roteamento": {
+    "destino_principal": "Fila_Revisao_Humana",
+    "requer_auditoria_humana": true,
+    "notificacao_gerada": null
+  },
+  "_avaliacao": {
+    "cenario": "ambiguo",
+    "formato": "imagem",
+    "degradacao": "foto",
+    "arquivo": "documentos/SINT-018.jpg",
+    "tipo_arquivo": "IMAGEM",
+    "canal_origem": "Ambulatorio",
+    "motivo": "Nome do segundo medicamento ilegível e sem dosagem: a farmácia não pode dispensar sem confirmar.",
+    "armadilha": null,
+    "cid_aceitos": [
+      null
+    ],
+    "campos_ausentes": [
+      "medicamentos[1].nome",
+      "medicamentos[1].dosagem"
+    ],
+    "decisao_pendente": null,
+    "transcricao": "Dr. Sílvio Ramos Bittencourt\nClínica Médica - CRM-PR 44610 - Rua Marechal Deodoro, 900, sala 3 - Curitiba/PR\n\nPaciente: Edson Luiz Krüger\nData: 20/10/2026\nUso oral\n1) Amitriptilina 25mg ------ 30 cp\n      1 cp à noite\n2) [ilegível] ------ 1 cx\n      1 cp 2x ao dia\n\n\nDOCUMENTO FICTÍCIO - dados sintéticos para teste do MediFlow (Equipo 22). Sem validade clínica.\n"
+  }
+}

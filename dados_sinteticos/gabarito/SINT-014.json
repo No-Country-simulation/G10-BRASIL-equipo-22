@@ -1,0 +1,49 @@
+{
+  "documento_id": "SINT-014",
+  "classificacao": {
+    "tipo_documento": "Laudo de Exame Laboratorial",
+    "especialidade": "Patologia Clínica / Cardiologia",
+    "nivel_prioridade": "Urgente"
+  },
+  "dados_extraidos": {
+    "paciente": {
+      "nome": "Paulo Roberto Zanella",
+      "idade": 59
+    },
+    "medico_solicitante": {
+      "nome": "Dr. Gustavo Antunes Pacheco",
+      "crm": "47302-PR"
+    },
+    "exame_realizado": "Troponina I ultrassensível e CK-MB massa",
+    "exames_solicitados": [],
+    "diagnostico_principal": null,
+    "cid_sugerido": null,
+    "medicamentos": []
+  },
+  "decisao_roteamento": {
+    "destino_principal": "Fila_Emergencia_Medica",
+    "requer_auditoria_humana": false,
+    "notificacao_gerada": {
+      "canal": "Alerta_Plantao_Medico"
+    }
+  },
+  "_avaliacao": {
+    "cenario": "urgencia",
+    "formato": "imagem",
+    "degradacao": "foto",
+    "arquivo": "documentos/SINT-014.jpg",
+    "tipo_arquivo": "IMAGEM",
+    "canal_origem": "Pronto_Socorro",
+    "motivo": "Troponina mais de 50 vezes acima da referência: suspeita de infarto.",
+    "armadilha": "Fotografado com celular e sem diagnóstico escrito: a urgência vem da troponina.",
+    "cid_aceitos": [
+      null,
+      "I21.9",
+      "I21.4",
+      "I24.9"
+    ],
+    "campos_ausentes": [],
+    "decisao_pendente": null,
+    "transcricao": "Hospital Aurora do Vale - Laboratório de Análises Clínicas\nRua Brigadeiro Franco, 3100 - Curitiba/PR - Responsável técnica: Dra. Simone Carvalho Weber - CRM-PR 40377\n\nRESULTADO DE EXAME\n\nPaciente: Paulo Roberto Zanella\nIdade: 59 anos\nSexo: Masculino\nAtendimento: 2026-PS-08815\nSolicitante: Dr. Gustavo Antunes Pacheco - CRM-PR 47302\nColeta: 17/10/2026 às 03h05\n\nMARCADORES CARDÍACOS\nExame | Resultado | Unidade | Valores de referência\nTroponina I ultrassensível | 1.850 | ng/L | Abaixo de 34 (homens)\nCK-MB massa | 38,0 | ng/mL | Abaixo de 5,0\nRESULTADO CRÍTICO comunicado à equipe do pronto-socorro às 03h40.\n\nDra. Simone Carvalho Weber\nPatologia Clínica - CRM-PR 40377\n\nDOCUMENTO FICTÍCIO - dados sintéticos para teste do MediFlow (Equipo 22). Sem validade clínica.\n"
+  }
+}

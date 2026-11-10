@@ -1,0 +1,26 @@
+documento_id,arquivo,tipo_arquivo,formato,degradacao,canal_origem,tipo_documento,cenario,nivel_prioridade,destino_esperado,requer_auditoria_humana
+SINT-001,documentos/SINT-001.pdf,PDF,pdf_digital,nenhuma,Ambulatorio,Receituário Médico,rotina,Rotina,Farmacia_Hospitalar,false
+SINT-002,documentos/SINT-002.json,TEXTO,texto,nenhuma,Ambulatorio,Receituário Médico,rotina,Rotina,Farmacia_Hospitalar,false
+SINT-003,documentos/SINT-003.pdf,PDF,pdf_digital,nenhuma,Laboratorio,Laudo de Exame Laboratorial,rotina,Rotina,Prontuario_Eletronico,false
+SINT-004,documentos/SINT-004.pdf,PDF,pdf_escaneado,scan_leve,Laboratorio,Laudo de Exame Laboratorial,rotina,Rotina,Prontuario_Eletronico,false
+SINT-005,documentos/SINT-005.json,TEXTO,texto,nenhuma,Ambulatorio,Laudo de Exame de Imagem,rotina,Rotina,Prontuario_Eletronico,false
+SINT-006,documentos/SINT-006.pdf,PDF,pdf_digital,nenhuma,Central_Autorizacoes,Guia de Solicitação de Procedimento,rotina,Rotina,Auditoria_Autorizacoes,false
+SINT-007,documentos/SINT-007.pdf,PDF,pdf_digital,nenhuma,Internacao,Relatório de Alta,rotina,Rotina,Prontuario_Eletronico,false
+SINT-008,documentos/SINT-008.jpg,IMAGEM,imagem,foto,Ambulatorio,Atestado Médico,rotina,Rotina,Prontuario_Eletronico,false
+SINT-009,documentos/SINT-009.jpg,IMAGEM,imagem,scan_leve,Ambulatorio,Receituário Médico,rotina,Rotina,Farmacia_Hospitalar,false
+SINT-010,documentos/SINT-010.jpg,IMAGEM,imagem,foto,Ambulatorio,Receituário Médico,rotina,Rotina,Farmacia_Hospitalar,false
+SINT-011,documentos/SINT-011.json,TEXTO,texto,nenhuma,Pronto_Socorro,Laudo de Exame de Imagem,urgencia,Urgente,Fila_Emergencia_Medica,false
+SINT-012,documentos/SINT-012.pdf,PDF,pdf_digital,nenhuma,Pronto_Socorro,Laudo de Exame de Imagem,urgencia,Urgente,Fila_Emergencia_Medica,false
+SINT-013,documentos/SINT-013.pdf,PDF,pdf_escaneado,scan_leve,Laboratorio,Laudo de Exame Laboratorial,urgencia,Urgente,Fila_Emergencia_Medica,false
+SINT-014,documentos/SINT-014.jpg,IMAGEM,imagem,foto,Pronto_Socorro,Laudo de Exame Laboratorial,urgencia,Urgente,Fila_Emergencia_Medica,false
+SINT-015,documentos/SINT-015.pdf,PDF,pdf_digital,nenhuma,Pronto_Socorro,Laudo de Exame de Imagem,urgencia,Urgente,Fila_Emergencia_Medica,false
+SINT-016,documentos/SINT-016.pdf,PDF,pdf_escaneado,scan_leve,Central_Autorizacoes,Guia de Solicitação de Procedimento,urgencia,Urgente,Auditoria_Autorizacoes,false
+SINT-017,documentos/SINT-017.json,TEXTO,texto,nenhuma,Laboratorio,Laudo de Exame Laboratorial,urgencia,Urgente,Fila_Emergencia_Medica,false
+SINT-018,documentos/SINT-018.jpg,IMAGEM,imagem,foto,Ambulatorio,Receituário Médico,ambiguo,Rotina,Fila_Revisao_Humana,true
+SINT-019,documentos/SINT-019.pdf,PDF,pdf_digital,nenhuma,Ambulatorio,Receituário Médico,ambiguo,Rotina,Fila_Revisao_Humana,true
+SINT-020,documentos/SINT-020.json,TEXTO,texto,nenhuma,Ambulatorio,Receituário Médico,ambiguo,Rotina,Fila_Revisao_Humana,true
+SINT-021,documentos/SINT-021.pdf,PDF,pdf_digital,nenhuma,Ambulatorio,Laudo de Exame de Imagem,ambiguo,Rotina,Fila_Revisao_Humana,true
+SINT-022,documentos/SINT-022.pdf,PDF,pdf_escaneado,scan_pesado,Central_Autorizacoes,Guia de Solicitação de Procedimento,ambiguo,Rotina,Fila_Revisao_Humana,true
+SINT-023,documentos/SINT-023.pdf,PDF,pdf_escaneado,scan_leve,Internacao,Relatório de Alta,ambiguo,Rotina,Fila_Revisao_Humana,true
+SINT-024,documentos/SINT-024.jpg,IMAGEM,imagem,scan_leve,Ambulatorio,Atestado Médico,ambiguo,Rotina,Fila_Revisao_Humana,true
+SINT-025,documentos/SINT-025.pdf,PDF,pdf_escaneado,scan_leve,Pronto_Socorro,Laudo de Exame de Imagem,urgencia,Urgente,Fila_Emergencia_Medica,true

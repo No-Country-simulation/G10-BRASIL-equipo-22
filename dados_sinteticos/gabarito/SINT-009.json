@@ -1,0 +1,65 @@
+{
+  "documento_id": "SINT-009",
+  "classificacao": {
+    "tipo_documento": "Receituário Médico",
+    "especialidade": "Medicina de Família e Comunidade",
+    "nivel_prioridade": "Rotina"
+  },
+  "dados_extraidos": {
+    "paciente": {
+      "nome": "Benedito Alves Correia",
+      "idade": 67
+    },
+    "medico_solicitante": {
+      "nome": "Dr. Diego Hoffmann Leal",
+      "crm": "50211-PR"
+    },
+    "exame_realizado": null,
+    "exames_solicitados": [],
+    "diagnostico_principal": null,
+    "cid_sugerido": null,
+    "medicamentos": [
+      {
+        "nome": "Cloridrato de metformina",
+        "dosagem": "850 mg",
+        "via": "oral",
+        "posologia": "1 comprimido após o café da manhã e 1 após o jantar"
+      },
+      {
+        "nome": "Sinvastatina",
+        "dosagem": "20 mg",
+        "via": "oral",
+        "posologia": "1 comprimido à noite"
+      },
+      {
+        "nome": "Ácido acetilsalicílico",
+        "dosagem": "100 mg",
+        "via": "oral",
+        "posologia": "1 comprimido após o almoço"
+      }
+    ]
+  },
+  "decisao_roteamento": {
+    "destino_principal": "Farmacia_Hospitalar",
+    "requer_auditoria_humana": false,
+    "notificacao_gerada": null
+  },
+  "_avaliacao": {
+    "cenario": "rotina",
+    "formato": "imagem",
+    "degradacao": "scan_leve",
+    "arquivo": "documentos/SINT-009.jpg",
+    "tipo_arquivo": "IMAGEM",
+    "canal_origem": "Ambulatorio",
+    "motivo": "Receita de uso contínuo, digitalizada e legível.",
+    "armadilha": null,
+    "cid_aceitos": [
+      null,
+      "E11.9",
+      "E11"
+    ],
+    "campos_ausentes": [],
+    "decisao_pendente": null,
+    "transcricao": "Unidade de Saúde Boa Vista\nAv. Paraná, 2600 - Curitiba/PR\n\nRECEITUÁRIO\n\nPaciente: Benedito Alves Correia\nIdade: 67 anos\nData: 14/10/2026\n\nUSO ORAL - USO CONTÍNUO\n1. Cloridrato de metformina 850 mg - 60 comprimidos\n   Tomar 1 comprimido após o café da manhã e 1 após o jantar.\n2. Sinvastatina 20 mg - 30 comprimidos\n   Tomar 1 comprimido à noite.\n3. Ácido acetilsalicílico 100 mg - 30 comprimidos\n   Tomar 1 comprimido após o almoço.\n\nCuritiba, 14 de outubro de 2026\nDr. Diego Hoffmann Leal\nMedicina de Família e Comunidade - CRM-PR 50211\n\nDOCUMENTO FICTÍCIO - dados sintéticos para teste do MediFlow (Equipo 22). Sem validade clínica.\n"
+  }
+}

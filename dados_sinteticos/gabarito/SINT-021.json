@@ -1,0 +1,47 @@
+{
+  "documento_id": "SINT-021",
+  "classificacao": {
+    "tipo_documento": "Laudo de Exame de Imagem",
+    "especialidade": "Radiologia",
+    "nivel_prioridade": "Rotina"
+  },
+  "dados_extraidos": {
+    "paciente": {
+      "nome": null,
+      "idade": 52
+    },
+    "medico_solicitante": {
+      "nome": "Dra. Marina Albuquerque Teles",
+      "crm": "38214-PR"
+    },
+    "exame_realizado": "Ultrassonografia de abdome total",
+    "exames_solicitados": [],
+    "diagnostico_principal": "Colelitíase sem colecistite; esteatose hepática grau I",
+    "cid_sugerido": "K80.2",
+    "medicamentos": []
+  },
+  "decisao_roteamento": {
+    "destino_principal": "Fila_Revisao_Humana",
+    "requer_auditoria_humana": true,
+    "notificacao_gerada": null
+  },
+  "_avaliacao": {
+    "cenario": "ambiguo",
+    "formato": "pdf_digital",
+    "degradacao": "nenhuma",
+    "arquivo": "documentos/SINT-021.pdf",
+    "tipo_arquivo": "PDF",
+    "canal_origem": "Ambulatorio",
+    "motivo": "Laudo sem o nome do paciente: não dá para anexar ao prontuário de ninguém.",
+    "armadilha": null,
+    "cid_aceitos": [
+      "K80.2",
+      "K76.0"
+    ],
+    "campos_ausentes": [
+      "paciente.nome"
+    ],
+    "decisao_pendente": null,
+    "transcricao": "Centro de Diagnóstico por Imagem Serra Verde\nRua XV de Novembro, 2100 - Curitiba/PR\n\nLAUDO DE ULTRASSONOGRAFIA\n\nPaciente:\nIdade: 52 anos\nSolicitante: Dra. Marina Albuquerque Teles - CRM-PR 38214\nData do exame: 21/10/2026\n\nULTRASSONOGRAFIA DE ABDOME TOTAL\nIndicação clínica: dor em hipocôndrio direito após as refeições.\n\nACHADOS\nFígado de dimensões normais, com aumento difuso da ecogenicidade. Vesícula biliar com cálculo móvel de 1,2 cm, paredes finas, sem sinais de inflamação. Vias biliares sem dilatação. Pâncreas, baço e rins sem alterações.\n\nIMPRESSÃO DIAGNÓSTICA\nEsteatose hepática grau I. Colelitíase, sem sinais de colecistite.\n\nDra. Luísa Fontana Ribeiro\nRadiologia e Diagnóstico por Imagem - CRM-PR 27309\n\nDOCUMENTO FICTÍCIO - dados sintéticos para teste do MediFlow (Equipo 22). Sem validade clínica.\n"
+  }
+}
