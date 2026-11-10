@@ -19,6 +19,7 @@ from mediflow_agent import (
     SCENARIO_3_AMBIGUOUS_HITL,
     MediFlowAgentGraph,
 )
+from mediflow_circuit_breaker import CircuitBreakerState, ResilientMediFlowClient
 from mediflow_schemas import DocumentoClinicoInput, ResultadoTriagemOutput, TipoArquivoEnum
 
 # =============================================================================
@@ -88,6 +89,9 @@ def run_streamlit_dashboard() -> None:
     st.caption("Hackathon ONE G10 (Oracle Next Education & Alura) · Equipo 22: Carlos, Fernando, Helder & Alessandro")
 
     agent = MediFlowAgentGraph()
+    if "resilient_client" not in st.session_state:
+        st.session_state["resilient_client"] = ResilientMediFlowClient(local_agent=agent)
+    client: ResilientMediFlowClient = st.session_state["resilient_client"]
 
     with st.sidebar:
         st.header("⚙️ Telemetria & IA")
@@ -95,6 +99,27 @@ def run_streamlit_dashboard() -> None:
             st.success(f"🟢 **NVIDIA NIM Conectado**\n\nModelo: `{agent.nvidia_model}`")
         else:
             st.info("🟡 **Modo SRE Resiliente**\n\nFallback Heurístico Local Ativo (Para ativar a LLM, configure `NVIDIA_API_KEY` no `.env`).")
+
+        st.markdown("---")
+        st.subheader("🛡️ Circuit-Breaker SRE")
+        cb_metrics = client.breaker.get_metrics()
+        cb_state = cb_metrics["state"]
+
+        if cb_state == CircuitBreakerState.CLOSED.value:
+            st.success(f"🟢 **Circuito: {cb_state}**\n\nRequisições fluem para a API REST FastAPI.")
+        elif cb_state == CircuitBreakerState.OPEN.value:
+            st.error(f"🔴 **Circuito: {cb_state}**\n\nContingência local ativa (Zero Downtime).")
+        else:
+            st.warning(f"🟡 **Circuito: {cb_state}**\n\nSondando recuperação do backend.")
+
+        c1, c2 = st.columns(2)
+        c1.metric("Total Chamadas", cb_metrics["total_calls"])
+        c2.metric("Fallbacks SRE", cb_metrics["fallback_calls"])
+
+        if st.button("🔄 Resetar Circuit-Breaker"):
+            client.breaker.reset()
+            st.rerun()
+
         st.markdown("---")
         st.caption("☁️ **OCI Always Free:** Bucket `mediflow-documentos-clinicos`")
         st.caption("🛡️ **Equipe 22:** Carlos, Fernando, Helder & Alessandro")
@@ -138,7 +163,21 @@ def run_streamlit_dashboard() -> None:
                     documento_texto=texto,
                     canal_origem=canal,
                 )
-                resultado = agent.run(entrada)
+                with st.spinner("Processando via cliente resiliente (Circuit-Breaker)..."):
+                    resultado, meta = client.processar_triagem(entrada)
+
+                # Feedback do Circuit-Breaker SRE
+                if meta.get("origem") == "fallback_local_in_process":
+                    st.warning(
+                        f"⚡ **Modo de Contingência SRE Ativo (Circuit-Breaker: {meta.get('status_circuito')})**\n\n"
+                        f"{meta.get('aviso')} — Latência: **{meta.get('latencia_ms')} ms**"
+                    )
+                else:
+                    st.info(
+                        f"🌐 **Processado via API REST FastAPI** ({meta.get('url')}) — "
+                        f"Latência HTTP: **{meta.get('latencia_ms')} ms**"
+                    )
+
                 if resultado.classificacao.nivel_prioridade.value == "Urgente":
                     st.error(f"🚨 PRIORIDADE URGENTE DETECTADA: {resultado.dados_extraidos.diagnostico_principal}")
                 elif resultado.decisao_roteamento.requer_auditoria_humana:
