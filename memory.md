@@ -286,6 +286,17 @@ MediFlow is an intelligent autonomous agent that:
   - Concluiu oficialmente 100% dos cards da Sprint M3 (14 de 14).
 - **Status:** Sprint M3 formalmente encerrada no GitHub Projects e Issues.
 
+### [2026-11-11] — Sprint M5 / CARD-27: Chaos Testing & Resiliência a Falhas Externas — PR #64
+- **Author:** Carlos Magno (Tech Lead & SRE/DevOps) / Pair Programming Assistant
+- **Actions Completed:**
+  - Implementou framework de injeção de caos em [`tests/chaos_injector.py`](file:///home/magno/ONE/tests/chaos_injector.py) com 4 vetores de injeção: (1) LLM API 500/503, (2) timeout severo de rede (> 5s / ReadTimeout), (3) erro de escrita no OCI Object Storage e (4) queda de receptor de Webhooks de emergência.
+  - Criou a suíte de 9 testes de alta complexidade em [`tests/test_chaos_testing.py`](file:///home/magno/ONE/tests/test_chaos_testing.py) cobrindo todos os vetores individuais, cenário de blackout externo simultâneo, transição do Circuit-Breaker SRE sob estresse, tolerância a dados corrompidos e retentativa exponencial do dispatcher.
+  - Comprovou resiliência Zero Downtime com 100% de tolerância a falhas externas e zero unhandled exceptions.
+  - Total de testes aprovados: **125 testes (100%)** em 8.24s.
+  - Branch `feat/chaos-testing-resiliencia` → PR #64 aberto apontando para `main`.
+  - Registrado MEL-024 no `melhorias.md` e atualizado `README.md` (125 testes, capacidade #11).
+- **Status:** CARD-27 implementado e submetido via PR #64 para revisão e homologação.
+
 ### [2026-11-11] — Sprint M5 / CARD-26: Otimização de Latência e Fast-Path Heurístico (< 3s) — PR #63 Merged na Main
 - **Author:** Carlos Magno (Tech Lead & IA Core) / Pair Programming Assistant
 - **Actions Completed:**
