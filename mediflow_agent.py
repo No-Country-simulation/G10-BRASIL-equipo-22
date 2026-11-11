@@ -36,6 +36,7 @@ from mediflow_schemas import (
     ResultadoTriagemOutput,
     TipoArquivoEnum,
 )
+from mediflow_fast_path import COMPACT_SYSTEM_PROMPT, FastPathEngine
 from oci_storage import OCIStorageService
 
 
@@ -95,32 +96,10 @@ class MediFlowAgentGraph:
     def _call_nvidia_nim(self, doc: DocumentoClinicoInput, texto_normalizado: str) -> Optional[Dict[str, Any]]:
         """
         Executa extração clínica multimodal via NVIDIA NIM (meta/llama-3.2-11b-vision-instruct).
-        Suporta texto clínico direto e imagens digitalizadas/manuscritas em Base64.
+        Suporta texto clínico direto e imagens com prompt compacto (<300 tokens) e max_tokens otimizado.
         """
         if not self.nvidia_api_key:
             return None
-
-        prompt_sistema = (
-            "Você é o especialista clínico e motor de IA do MediFlow (Hackathon ONE G10 - Equipo 22). "
-            "Sua tarefa é analisar o documento clínico fornecido e extrair entidades estruturadas "
-            "com máxima precisão médica, classificando o tipo do documento, prioridade e score de confiança. "
-            "Retorne APENAS um objeto JSON válido, sem texto introdutório nem markdown, no formato:\n"
-            "{\n"
-            '  "tipo_documento": "ex: Laudo de Exame de Imagem | Receituário Médico | Guia TISS",\n'
-            '  "especialidade": "ex: Radiologia / Pneumologia | Clínica Médica",\n'
-            '  "nivel_prioridade": "Rotina | Alta | Urgente | Revisao_Humana",\n'
-            '  "score_confianca_classificacao": 0.95,\n'
-            '  "paciente": {"nome": "string ou null", "idade": number ou null},\n'
-            '  "medico_solicitante": {"nome": "string ou null", "crm": "string ou null"},\n'
-            '  "exame_realizado": "string ou null",\n'
-            '  "diagnostico_principal": "string ou null",\n'
-            '  "cid_sugerido": "string ou null",\n'
-            '  "medicamentos_prescritos": ["string"]\n'
-            "}\n"
-            "Diretrizes clínicas essenciais:\n"
-            "- Se identificar Tromboembolismo Pulmonar Agudo (TEP), Embolia Pulmonar, Infarto (IAM) ou quadro crítico, marque nivel_prioridade='Urgente', score_confianca_classificacao >= 0.95 e cid_sugerido='I26.9'.\n"
-            "- Se o documento for manuscrito ilegível, faltar o CRM médico ou houver rasuras graves, marque nivel_prioridade='Revisao_Humana' e score_confianca_classificacao < 0.85."
-        )
 
         user_content: Any
         if doc.arquivo_binario_b64 and doc.tipo_arquivo in (TipoArquivoEnum.IMAGEM, TipoArquivoEnum.PDF):
@@ -136,12 +115,12 @@ class MediFlowAgentGraph:
         payload = {
             "model": self.nvidia_model,
             "messages": [
-                {"role": "system", "content": prompt_sistema},
+                {"role": "system", "content": COMPACT_SYSTEM_PROMPT},
                 {"role": "user", "content": user_content},
             ],
             "temperature": 0.1,
             "top_p": 0.7,
-            "max_tokens": 1024,
+            "max_tokens": 512,
         }
 
         headers = {
@@ -216,13 +195,28 @@ class MediFlowAgentGraph:
     # NÓ 2: Classificação e Extração de Entidades Clínicas (LLM Multimodal)
     # -------------------------------------------------------------------------
     def classifier_extractor_node(self, state: MediFlowGraphState) -> MediFlowGraphState:
+        t0 = time.time()
         texto = state.texto_normalizado
         doc = state.documento_input
 
-        # 1. Tentativa de Extração via NVIDIA NIM (se NVIDIA_API_KEY configurada)
+        # 1. Fast-Path Heurístico (< 100ms) para documentos com padrões clínicos estruturados
+        if texto and not doc.arquivo_binario_b64:
+            fp_engine = FastPathEngine(confidence_threshold=CONFIDENCE_THRESHOLD_HITL)
+            fp_result = fp_engine.process(texto)
+            if fp_result.is_fast_path:
+                state.telemetria_sre["provider"] = "Fast-Path Heuristic Engine (<100ms)"
+                state.telemetria_sre["fast_path"] = True
+                state.telemetria_sre["fast_path_latencia_ms"] = fp_result.latencia_ms
+                state.telemetria_sre["classifier_latencia_ms"] = round((time.time() - t0) * 1000, 2)
+                state.classificacao = fp_result.classificacao
+                state.dados_extraidos = fp_result.dados_extraidos
+                return state
+
+        # 2. Tentativa de Extração via NVIDIA NIM com Prompt Compacto (se NVIDIA_API_KEY configurada)
         llm_data = self._call_nvidia_nim(doc, texto)
         if llm_data and isinstance(llm_data, dict):
-            state.telemetria_sre["provider"] = f"NVIDIA NIM ({self.nvidia_model})"
+            state.telemetria_sre["provider"] = f"NVIDIA NIM ({self.nvidia_model} - Compact Prompt)"
+            state.telemetria_sre["fast_path"] = False
             prioridade_str = str(llm_data.get("nivel_prioridade", "Rotina")).capitalize()
             prioridade_map = {
                 "Rotina": NivelPrioridadeEnum.ROTINA,
@@ -260,6 +254,7 @@ class MediFlowAgentGraph:
 
         # 2. Fallback Resiliente SRE: Motor Heurístico Clínico Local
         state.telemetria_sre["provider"] = "Heuristic Clinical Engine (Resilient SRE Fallback)"
+        state.telemetria_sre["fast_path"] = False
         texto_lower = texto.lower()
 
         # 1. Extração de Paciente (Nome e Idade)

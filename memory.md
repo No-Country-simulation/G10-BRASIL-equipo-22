@@ -286,6 +286,17 @@ MediFlow is an intelligent autonomous agent that:
   - Concluiu oficialmente 100% dos cards da Sprint M3 (14 de 14).
 - **Status:** Sprint M3 formalmente encerrada no GitHub Projects e Issues.
 
+### [2026-11-11] — Sprint M5 / CARD-26: Otimização de Latência e Fast-Path Heurístico (< 3s)
+- **Author:** Carlos Magno (Tech Lead & IA Core) / Pair Programming Assistant
+- **Actions Completed:**
+  - Implementou o motor de Fast-Path Heurístico determinístico em [`mediflow_fast_path.py`](file:///home/magno/ONE/mediflow_fast_path.py) com autômatos regex pré-compilados de tempo submilisegundo (< 1ms).
+  - Otimizou o prompt de sistema de LLM (`COMPACT_SYSTEM_PROMPT`) para 181 tokens (< 300 tokens) e limitou `max_tokens: 512`, reduzindo drasticamente tempo de transferência e decodificação na NVIDIA NIM e Gemini.
+  - Integrou Fast-Path nativamente ao nó `classifier_extractor_node` no LangGraph StateGraph (`week3/agent.py`) e no `mediflow_agent.py`, alcançando latência de triagem < 50ms em fluxos padronizados.
+  - Desenvolveu a suíte de 14 testes automatizados em [`tests/test_otimizacao_latencia.py`](file:///home/magno/ONE/tests/test_otimizacao_latencia.py) cobrindo prompt token budget, cenários de rotina e urgência (TEP/IAM/AVC/Sepse), fallback para LLM em texto livre, telemetria SRE e benchmark de latência média (< 3.0s).
+  - Total de testes aprovados: **116 testes (100%)** em 8.15s (redução no tempo total da suíte mesmo adicionando 14 testes).
+  - Registrado MEL-023 no `melhorias.md`.
+- **Status:** CARD-26 implementado e validado localmente. Pronto para homologação, commit e abertura de PR.
+
 ### [2026-11-10] — Sprint M5 / CARD-25: Circuit-Breaker SRE — PR #62 Merged na Main
 - **Author:** Carlos Magno (Tech Lead & SRE) / Pair Programming Assistant
 - **Actions Completed:**
