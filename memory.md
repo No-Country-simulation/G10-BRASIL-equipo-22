@@ -278,6 +278,19 @@ MediFlow is an intelligent autonomous agent that:
   - Documented release in [`week4/README.md`](file:///home/magno/ONE/week4/README.md).
 - **Status:** Week 4 SRE, CI/CD, and Concurrency Load deliverables completed and validated.
 
+### [2026-11-22] — Sprint M6 / CARD-38: Gravação da Demonstração Técnica LangGraph + SRE — PR #73 Merged na Main
+- **Author:** Carlos Magno (Tech Lead & SRE/DevOps) / Pair Programming Assistant
+- **Actions Completed:**
+  - Criou o script executivo [`week6/demo_runner.py`](file:///home/magno/ONE/week6/demo_runner.py) para execução automatizada e apresentação dos 3 cenários clínicos canônicos (Rotina, Urgência TEP, HitL Ambíguo).
+  - Integrou cálculo e exibição de percentis estatísticos de latência ($p50, p75, p90, p95, p99$) e verificação de conformidade com SLA clínico (< 5000ms).
+  - Demonstrou a máquina de estados do Circuit-Breaker SRE (`CLOSED` -> `OPEN` -> `HALF_OPEN` -> `CLOSED`) com contingência Zero Downtime e sonda de recuperação.
+  - Salvou a saída executiva completa em [`week6/demo_output_sample.txt`](file:///home/magno/ONE/week6/demo_output_sample.txt).
+  - Implementou os testes em [`tests/test_demo_runner.py`](file:///home/magno/ONE/tests/test_demo_runner.py) (2 testes cobrindo CLI subprocess e API programática).
+  - Total de testes aprovados: **174 testes (100% de sucesso)** em 12.4s.
+  - Branch `feat/demo-tecnica-langgraph-sre` → PR #73 aberto e mesclado na `main`.
+  - Issue #47 (CARD-38) fechada automaticamente.
+- **Status:** CARD-38 100% entregue e homologado.
+
 ### [2026-11-22] — Sprint M6 / CARD-39: Auditoria de Segurança de Credenciais & Blindagem Git — PR #72 Merged na Main
 - **Author:** Carlos Magno (Tech Lead & SRE/DevOps) / Pair Programming Assistant
 - **Actions Completed:**
