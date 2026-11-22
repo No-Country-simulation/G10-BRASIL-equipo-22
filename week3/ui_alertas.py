@@ -126,3 +126,101 @@ def texto_reenvio(resultado: Dict[str, Any]) -> Tuple[str, str]:
         return ("warning", "Modo simulado: sem WEBHOOK_EMERGENCY_URL não há para onde reenviar.")
     texto_entrega, _ = descrever_entrega(status)
     return ("error", f"Reenvio do alerta {alerta} {texto_entrega}. Resposta: {resultado.get('detalhes') or 'sem resposta'}")
+
+
+def calcular_metricas_alertas(alertas: List[Dict[str, Any]]) -> Dict[str, Any]:
+    """Calcula estatísticas de observabilidade para a aba de status de Webhooks (CARD-18)."""
+    if not alertas:
+        return {
+            "total": 0,
+            "entregues": 0,
+            "simulados": 0,
+            "falhas": 0,
+            "taxa_sucesso_pct": 100.0,
+            "latencia_media_ms": 0.0,
+        }
+
+    total = len(alertas)
+    entregues = sum(1 for a in alertas if a.get("status") == "sucesso")
+    simulados = sum(1 for a in alertas if a.get("status") == "sucesso_mock")
+    falhas = total - entregues - simulados
+    latencias = [a.get("latencia_ms", 0.0) for a in alertas if a.get("latencia_ms") is not None]
+    latencia_media = round(sum(latencias) / len(latencias), 1) if latencias else 0.0
+    taxa_sucesso = round(((entregues + simulados) / total) * 100, 1)
+
+    return {
+        "total": total,
+        "entregues": entregues,
+        "simulados": simulados,
+        "falhas": falhas,
+        "taxa_sucesso_pct": taxa_sucesso,
+        "latencia_media_ms": latencia_media,
+    }
+
+
+def renderizar_painel_webhooks_streamlit(dispatcher: Any) -> None:
+    """Renderiza a aba completa de histórico de Webhooks e status no Streamlit (CARD-18)."""
+    import streamlit as st  # type: ignore
+
+    alertas = [
+        {
+            "timestamp": r.timestamp,
+            "documento_id": r.documento_id,
+            "paciente": r.paciente_nome,
+            "diagnostico": r.diagnostico,
+            "canal": r.canal,
+            "status": r.status_entrega,
+            "resposta_servidor": r.resposta_servidor,
+            "latencia_ms": r.latencia_ms,
+            "tentativas": r.tentativas,
+            "alerta_id": r.alerta_id,
+            "pode_reenviar": dispatcher.pode_reenviar(r),
+            "reenvios": r.reenvios,
+            "mensagem": r.mensagem,
+        }
+        for r in dispatcher.historico_alertas
+    ]
+
+    st.subheader("📡 Histórico de Entregas & Status de Webhooks em Tempo Real")
+    st.caption("Observabilidade SRE de alertas críticos enviados para equipes de plantão hospitalar.")
+
+    if not alertas:
+        st.info("Nenhum alerta de plantão foi disparado nesta sessão ainda.")
+        return
+
+    # Métricas executivas
+    metricas = calcular_metricas_alertas(alertas)
+    col1, col2, col3, col4 = st.columns(4)
+    col1.metric("Total de Alertas", metricas["total"])
+    col2.metric("Entregas Confirmadas", f"{metricas['entregues']} ({metricas['taxa_sucesso_pct']}%)")
+    col3.metric("Falhas / Pendentes", metricas["falhas"])
+    col4.metric("Latência Média", f"{metricas['latencia_media_ms']} ms")
+
+    st.markdown("### Fila de Disparos")
+    st.dataframe(linhas_historico(alertas), use_container_width=True, hide_index=True)
+
+    st.markdown("### Detalhes & Ações de Reenvio Manual")
+    for al in reversed(alertas):
+        texto_entrega, _ = descrever_entrega(al["status"])
+        titulo = f"{al['timestamp'][:19].replace('T', ' ')} · {al['documento_id']} · {texto_entrega}"
+        with st.expander(titulo, expanded=al["pode_reenviar"]):
+            st.markdown(
+                f"Canal: `{al['canal']}` · Latência: **{al['latencia_ms']} ms** · "
+                f"Tentativas: `{al['tentativas']}` · Reenvios manuais: `{al['reenvios']}` · ID: `{al['alerta_id']}`"
+            )
+            st.info(f"Paciente: **{al['paciente']}** | Diagnóstico: **{al['diagnostico']}**")
+            st.code(al["mensagem"], language="text")
+            if al["status"] not in ("sucesso", "sucesso_mock") and al["resposta_servidor"]:
+                st.caption(f"Resposta do servidor: {al['resposta_servidor']}")
+
+            if al["status"] != "sucesso":
+                if st.button(
+                    "🔄 Reenviar alerta ao plantão",
+                    key=f"reenviar_painel_{al['alerta_id']}",
+                    disabled=not al["pode_reenviar"],
+                    help=None if al["pode_reenviar"] else "Modo simulado: configure WEBHOOK_EMERGENCY_URL para reenviar.",
+                ):
+                    resultado = dispatcher.reenviar(al["alerta_id"])
+                    nivel, texto = texto_reenvio(resultado)
+                    getattr(st, nivel)(texto)
+                    st.rerun()
