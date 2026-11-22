@@ -278,6 +278,17 @@ MediFlow is an intelligent autonomous agent that:
   - Documented release in [`week4/README.md`](file:///home/magno/ONE/week4/README.md).
 - **Status:** Week 4 SRE, CI/CD, and Concurrency Load deliverables completed and validated.
 
+### [2026-11-22] — Sprint M6 / CARDs 40-42 & Macro #9: Roteiro, Metadados e Edição do Vídeo Demo — PR #74 Merged na Main
+- **Author:** Carlos Magno (Tech Lead) / Fernando Szekut / Pair Programming Assistant
+- **Actions Completed:**
+  - Elaborou o roteiro técnico detalhado de 3 minutos em [`week6/roteiro_video_3min.md`](file:///home/magno/ONE/week6/roteiro_video_3min.md) dividido em 5 blocos temporais estritos (00:00 a 03:00) cobrindo contexto clínico, LangGraph, os 3 fluxos no Streamlit, engenharia SRE/OCI e encerramento.
+  - Criou o arquivo de metadados de publicação e legendagem em [`week6/demo_video_metadata.md`](file:///home/magno/ONE/week6/demo_video_metadata.md) com título oficial, descrição, capítulos para o YouTube e arquivo de legendas WebVTT.
+  - Implementou a suíte de testes em [`tests/test_video_assets.py`](file:///home/magno/ONE/tests/test_video_assets.py) (2 testes aprovados).
+  - Total de testes aprovados: **176 testes (100% de sucesso)**.
+  - Branch `feat/m6-video-demo-roteiro-edicao` → PR #74 aberto e mesclado na `main`.
+  - Fechou automaticamente os cards #49 (CARD-40), #50 (CARD-41), #51 (CARD-42) e a macro issue #9.
+- **Status:** CARDs 40, 41, 42 e Macro #9 100% entregues e homologados.
+
 ### [2026-11-22] — Sprint M6 / CARD-38: Gravação da Demonstração Técnica LangGraph + SRE — PR #73 Merged na Main
 - **Author:** Carlos Magno (Tech Lead & SRE/DevOps) / Pair Programming Assistant
 - **Actions Completed:**
