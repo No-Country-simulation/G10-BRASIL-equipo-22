@@ -23,34 +23,51 @@ from mediflow_circuit_breaker import CircuitBreakerState, ResilientMediFlowClien
 from mediflow_schemas import DocumentoClinicoInput, ResultadoTriagemOutput, TipoArquivoEnum
 
 # =============================================================================
-# 1. API REST (FastAPI) — Endpoint Oficial `/api/v1/triagem`
+# 1. API REST (FastAPI) — Endpoint Oficial `/api/v1/triagem` & Swagger v1.5.0 (CARD-36 / #45)
 # =============================================================================
 try:
+    import datetime
     from fastapi import FastAPI, HTTPException
+    from pydantic import BaseModel, Field
+
+    tags_metadata = [
+        {"name": "Triagem & IA", "description": "Processamento de documentos clínicos via LangGraph e Circuit-Breaker SRE"},
+        {"name": "Auditoria & HitL", "description": "Fila Human-in-the-Loop, aprovação em 1 clique e auditoria reversa"},
+        {"name": "Histórico & Consultas", "description": "Busca histórica, filtros por CRM, período e conformidade OCI ATP"},
+        {"name": "SRE & Confiabilidade", "description": "Healthcheck de infraestrutura, bucket OCI Always Free e status de serviços"},
+    ]
 
     api = FastAPI(
-        title="MediFlow Autonomous Clinical Triage API",
-        description="Agente Autônomo para Triagem, Extração e Roteamento de Documentos Clínicos (ONE G10 - Equipo 22)",
-        version="0.2.0",
+        title="MediFlow Autonomous Clinical Triage & HitL API",
+        description="API Corporativa para Triagem Automatizada, Extração Multimodal e Roteamento Seguro de Documentos Clínicos (Hackathon ONE G10 - Equipo 22)",
+        version="1.5.0",
+        openapi_tags=tags_metadata,
+        docs_url="/docs",
+        redoc_url="/redoc",
     )
     _agent_instance = MediFlowAgentGraph()
     _audit_queue: Dict[str, ResultadoTriagemOutput] = {}
+
+    class ReaberturaLaudoInput(BaseModel):
+        motivo_reabertura: str = Field(..., description="Justificativa clínica ou administrativa do supervisor médico")
+        supervisor_crm: str = Field(..., description="CRM e UF do supervisor médico solicitante (ex.: 99887-SP)")
 
     @api.get("/", include_in_schema=False)
     def root_redirect():
         from fastapi.responses import RedirectResponse
         return RedirectResponse(url="/docs")
 
-    @api.get("/health")
+    @api.get("/health", tags=["SRE & Confiabilidade"], summary="Healthcheck e telemetria de infraestrutura OCI")
     def healthcheck() -> dict:
         return {
             "status": "healthy",
             "service": "mediflow-agent",
+            "versao": "1.5.0",
             "oci_bucket": _agent_instance.storage.bucket_name,
-            "tier": "OCI Always Free",
+            "tier": "OCI Always Free (R$ 0,00)",
         }
 
-    @api.post("/api/v1/triagem", response_model=ResultadoTriagemOutput)
+    @api.post("/api/v1/triagem", response_model=ResultadoTriagemOutput, tags=["Triagem & IA"], summary="Executa triagem clínica automatizada e roteamento")
     def processar_triagem(payload: DocumentoClinicoInput) -> ResultadoTriagemOutput:
         resultado = _agent_instance.run(payload)
         if resultado.decisao_roteamento.requer_auditoria_humana:
@@ -75,7 +92,7 @@ try:
 
         return resultado
 
-    @api.get("/api/v1/documentos/{documento_id}")
+    @api.get("/api/v1/documentos/{documento_id}", tags=["Histórico & Consultas"], summary="Busca detalhada de documento clínico por ID")
     def obter_documento_por_id(documento_id: str) -> dict:
         """Busca detalhada de documento clínico por ID com metadados e payload (CARD-22 / #31)."""
         if documento_id in _audit_queue:
@@ -112,7 +129,7 @@ try:
 
         raise HTTPException(status_code=404, detail=f"Documento {documento_id} não encontrado.")
 
-    @api.get("/api/v1/historico")
+    @api.get("/api/v1/historico", tags=["Histórico & Consultas"], summary="Consulta histórica com filtros por CRM e prioridade")
     def consultar_historico(
         crm: Optional[str] = None,
         prioridade: Optional[str] = None,
@@ -166,11 +183,11 @@ try:
                 "documentos": documentos,
             }
 
-    @api.get("/api/v1/auditoria", response_model=List[ResultadoTriagemOutput])
+    @api.get("/api/v1/auditoria", response_model=List[ResultadoTriagemOutput], tags=["Auditoria & HitL"], summary="Listar laudos retidos na fila de auditoria humana")
     def listar_fila_auditoria_humana() -> List[ResultadoTriagemOutput]:
         return list(_audit_queue.values())
 
-    @api.post("/api/v1/auditoria/{documento_id}/aprovar")
+    @api.post("/api/v1/auditoria/{documento_id}/aprovar", tags=["Auditoria & HitL"], summary="Aprovar laudo corrigido pelo auditor humano em 1 clique")
     def aprovar_documento_hitl(documento_id: str, crm_corrigido: str, destino_final: str = "Farmacia_Hospitalar") -> dict:
         if documento_id not in _audit_queue:
             raise HTTPException(status_code=404, detail="Documento não encontrado na fila de revisão humana.")
@@ -182,6 +199,50 @@ try:
             "mensagem": f"Documento {documento_id} aprovado pelo auditor humano e encaminhado para {destino_final}.",
             "registro_atualizado": item.to_dict(exclude_none=True),
         }
+
+    @api.post("/api/v1/auditoria/{documento_id}/reabrir", tags=["Auditoria & HitL"], summary="Reabertura de laudo liberado para auditoria reversa (CARD-34 / #43)")
+    def reabrir_laudo_auditoria_reversa(documento_id: str, dados: ReaberturaLaudoInput) -> dict:
+        """Permite que supervisores médicos solicitem reabertura de laudos previamente liberados (CARD-34 / #43)."""
+        import sqlite3
+        from oci_storage import OCIATPManager
+        atp = OCIATPManager()
+        with sqlite3.connect(atp.db_path) as conn:
+            conn.row_factory = sqlite3.Row
+            row = conn.execute(
+                "SELECT * FROM clinico_audit_historico WHERE documento_id = ?",
+                (documento_id,),
+            ).fetchone()
+            if not row:
+                raise HTTPException(status_code=404, detail=f"Documento {documento_id} não encontrado no histórico para reabertura.")
+
+            conn.execute(
+                "UPDATE clinico_audit_historico SET requer_auditoria = 1, prioridade = 'Revisao_Humana' WHERE documento_id = ?",
+                (documento_id,),
+            )
+            conn.commit()
+
+            payload = json.loads(row["payload_json"]) if row["payload_json"] else {}
+            payload["auditoria_reversa"] = {
+                "motivo": dados.motivo_reabertura,
+                "supervisor_crm": dados.supervisor_crm,
+                "data_reabertura": datetime.datetime.now().isoformat(),
+            }
+
+            try:
+                item_reaberto = ResultadoTriagemOutput.model_validate(payload)
+                item_reaberto.decisao_roteamento.requer_auditoria_humana = True
+                item_reaberto.decisao_roteamento.justificativa_roteamento = f"Reaberto por {dados.supervisor_crm}: {dados.motivo_reabertura}"
+                _audit_queue[documento_id] = item_reaberto
+            except Exception:
+                pass
+
+            return {
+                "mensagem": f"Laudo {documento_id} reaberto com sucesso para auditoria reversa por {dados.supervisor_crm}.",
+                "documento_id": documento_id,
+                "novo_status": "em_auditoria_reversa",
+                "supervisor_crm": dados.supervisor_crm,
+                "motivo": dados.motivo_reabertura,
+            }
 
 except ImportError:
     api = None
