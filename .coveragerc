@@ -1,0 +1,25 @@
+[run]
+branch = True
+source = .
+omit =
+    .venv/*
+    tests/*
+    week3/test_*
+    week3/app.py
+    week3/run_tests.py
+    week4/test_*
+    week4/run_week4_tests.py
+    export_plano_pdf.py
+    assign_all_cards.py
+
+[report]
+exclude_lines =
+    pragma: no cover
+    def __repr__
+    raise AssertionError
+    raise NotImplementedError
+    if __name__ == .__main__.:
+    if is_streamlit:
+    def run_streamlit_dashboard
+    import streamlit as st
+    st\.
