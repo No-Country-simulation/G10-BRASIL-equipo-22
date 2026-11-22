@@ -9,6 +9,11 @@
 .env.*
 *.key
 *.pem
+*.cert
+*.pfx
+secrets.json
+.oci/
+~/.oci/config
 
 # 2. Ambientes Virtuais e Bibliotecas de Terceiros (Libs)
 *.venv
