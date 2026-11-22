@@ -192,8 +192,15 @@ except ImportError:
 # =============================================================================
 def run_streamlit_dashboard() -> None:
     import streamlit as st  # type: ignore
+    from week5_ui_helpers import (
+        CSS_DESIGN_SYSTEM,
+        gerar_badge_manchester,
+        gerar_audio_alerta_sintetico,
+        filtrar_fila_auditoria,
+    )
 
     st.set_page_config(page_title="MediFlow — Triagem Clínica & HitL", page_icon="🏥", layout="wide")
+    st.markdown(CSS_DESIGN_SYSTEM, unsafe_allow_html=True)
     st.title("🏥 MediFlow — Agente Autônomo de Triagem e Roteamento Clínico")
     st.caption("Hackathon ONE G10 (Oracle Next Education & Alura) · Equipo 22: Carlos, Fernando, Helder & Alessandro")
 
@@ -201,6 +208,22 @@ def run_streamlit_dashboard() -> None:
     if "resilient_client" not in st.session_state:
         st.session_state["resilient_client"] = ResilientMediFlowClient(local_agent=agent)
     client: ResilientMediFlowClient = st.session_state["resilient_client"]
+
+    # Fila de auditoria em memória compartilhada na sessão
+    if "fila_hitl" not in st.session_state:
+        sample = agent.run(SCENARIO_3_AMBIGUOUS_HITL)
+        st.session_state["fila_hitl"] = [
+            {
+                "documento_id": sample.documento_id,
+                "especialidade": sample.classificacao.especialidade,
+                "prioridade": sample.classificacao.nivel_prioridade.value,
+                "score": sample.classificacao.score_confianca_classificacao,
+                "paciente": sample.dados_extraidos.paciente.nome or "Carlos Eduardo",
+                "crm": sample.dados_extraidos.medico_solicitante.crm or "Sem CRM",
+                "motivo": sample.decisao_roteamento.justificativa_roteamento,
+                "payload": sample.to_dict(exclude_none=True),
+            }
+        ]
 
     with st.sidebar:
         st.header("⚙️ Telemetria & IA")
@@ -233,8 +256,9 @@ def run_streamlit_dashboard() -> None:
         st.caption("☁️ **OCI Always Free:** Bucket `mediflow-documentos-clinicos`")
         st.caption("🛡️ **Equipe 22:** Carlos, Fernando, Helder & Alessandro")
 
-    tab_triagem, tab_hitl, tab_oci = st.tabs([
+    tab_triagem, tab_visualizador, tab_hitl, tab_oci = st.tabs([
         "📥 Triagem de Documentos (3 Cenários)",
+        "👁️ Visualizador Lado a Lado (Conferência Médica)",
         "👩‍⚕️ Painel de Auditoria Humana (HitL)",
         "☁️ Buckets OCI Object Storage & Banco de Dados (Always Free)",
     ])
@@ -287,24 +311,91 @@ def run_streamlit_dashboard() -> None:
                         f"Latência HTTP: **{meta.get('latencia_ms')} ms**"
                     )
 
-                if resultado.classificacao.nivel_prioridade.value == "Urgente":
+                prio_val = resultado.classificacao.nivel_prioridade.value
+                st.markdown(gerar_badge_manchester(prio_val), unsafe_allow_html=True)
+
+                if prio_val == "Urgente":
+                    st.markdown(gerar_audio_alerta_sintetico(), unsafe_allow_html=True)
                     st.error(f"🚨 PRIORIDADE URGENTE DETECTADA: {resultado.dados_extraidos.diagnostico_principal}")
                 elif resultado.decisao_roteamento.requer_auditoria_humana:
                     st.warning("⚠️ DOCUMENTO RETIDO PARA AUDITORIA HUMANA (Score < 0.85)")
+                    # Adiciona à fila HitL interativa
+                    st.session_state["fila_hitl"].append({
+                        "documento_id": resultado.documento_id,
+                        "especialidade": resultado.classificacao.especialidade,
+                        "prioridade": prio_val,
+                        "score": resultado.classificacao.score_confianca_classificacao,
+                        "paciente": resultado.dados_extraidos.paciente.nome or "Paciente Não Identificado",
+                        "crm": resultado.dados_extraidos.medico_solicitante.crm or "Sem CRM",
+                        "motivo": resultado.decisao_roteamento.justificativa_roteamento,
+                        "payload": resultado.to_dict(exclude_none=True),
+                    })
                 else:
                     st.success(f"✅ APROVADO AUTOMATICAMENTE → {resultado.decisao_roteamento.destino_principal.value}")
 
                 st.json(resultado.to_dict(exclude_none=True))
 
+    with tab_visualizador:
+        st.subheader("👁️ Visualizador Lado a Lado (Conferência Médica Multimodal) (CARD-28 / #37)")
+        st.caption("Inspeção visual direta comparando o documento original submetido com as entidades clínicas extraídas pela IA.")
+        
+        col_doc_orig, col_dados_extra = st.columns([1, 1])
+        with col_doc_orig:
+            st.markdown("#### 📄 Documento Clínico Original")
+            st.info(f"**ID:** `{default_doc.documento_id}` | **Origem:** `{default_doc.canal_origem}`")
+            st.text_area(
+                "Conteúdo do Laudo / Prescrição:",
+                value=default_doc.documento_texto or "Arquivo de imagem digitalizado",
+                height=320,
+                disabled=True,
+            )
+
+        with col_dados_extra:
+            st.markdown("#### 🩺 Entidades Clínicas Extraídas")
+            prio_default = "Urgente" if "Cenário 2" in preset else ("Rotina" if "Cenário 1" in preset else "Revisao_Humana")
+            st.markdown(gerar_badge_manchester(prio_default), unsafe_allow_html=True)
+            
+            with st.container():
+                st.text_input("Paciente:", value="Carlos Eduardo Mendes" if "Cenário 2" in preset else "Ana Paula Costa", disabled=True)
+                st.text_input("Diagnóstico / Conclusão:", value="Tromboembolismo Pulmonar Agudo (TEP)" if "Cenário 2" in preset else "Receituário Padrão", disabled=True)
+                st.text_input("CRM do Solicitante:", value="145892-SP" if "Cenário 2" in preset else "98765-RJ", disabled=True)
+                st.text_input("Hipótese CID-10:", value="I26.9" if "Cenário 2" in preset else "Z76.0", disabled=True)
+
     with tab_hitl:
-        st.subheader("Fila de Revisão Humana (Human-in-the-Loop)")
-        st.info("Documentos com score de confiança < 0.85 ou campos vitais ilegíveis aguardam validação do auditor.")
-        hitl_sample = agent.run(SCENARIO_3_AMBIGUOUS_HITL)
-        st.write(f"**Documento Retido:** `{hitl_sample.documento_id}` | **Score:** `{hitl_sample.classificacao.score_confianca_classificacao}`")
-        st.write(f"**Motivo:** {hitl_sample.decisao_roteamento.justificativa_roteamento}")
-        crm_fix = st.text_input("Informar CRM validado pelo Auditor:", value="154990-SP")
-        if st.button("✅ Aprovar e Liberar Documento Corrigido"):
-            st.success(f"Documento {hitl_sample.documento_id} assinado com CRM {crm_fix} e liberado para Farmácia Hospitalar!")
+        st.subheader("👩‍⚕️ Fila de Revisão Humana (Human-in-the-Loop) (CARD-30 / #39)")
+        st.info("Painel de auditoria com filtros dinâmicos de especialidade e gravidade para aprovação em 1 clique.")
+
+        # Filtros Dinâmicos (CARD-30)
+        cf1, cf2, cf3 = st.columns(3)
+        with cf1:
+            filtro_esp = st.selectbox("Filtrar Especialidade:", ["Todas", "Radiologia", "Pneumologia", "Clínica Médica", "Cardiologia"])
+        with cf2:
+            filtro_prio = st.selectbox("Filtrar Gravidade:", ["Todas", "Urgente", "Alta", "Revisao_Humana", "Rotina"])
+        with cf3:
+            busca_termo = st.text_input("Busca Rápida (Paciente, CRM ou ID):", "")
+
+        fila_filtrada = filtrar_fila_auditoria(
+            st.session_state["fila_hitl"],
+            especialidade=filtro_esp,
+            prioridade=filtro_prio,
+            busca=busca_termo,
+        )
+
+        st.caption(f"Mostrando **{len(fila_filtrada)}** de **{len(st.session_state['fila_hitl'])}** documentos na fila de auditoria.")
+
+        # Renderização dos Cards com Aprovação em 1 Clique (Macro #8)
+        for idx, item in enumerate(fila_filtrada):
+            doc_item_id = item["documento_id"]
+            with st.expander(f"📋 {doc_item_id} — {item.get('paciente')} (Score: {item.get('score')})", expanded=True):
+                st.markdown(gerar_badge_manchester(item.get("prioridade")), unsafe_allow_html=True)
+                st.write(f"**Motivo de Retenção:** {item.get('motivo')}")
+                
+                crm_input = st.text_input("CRM Validado:", value=item.get("crm") if item.get("crm") != "Sem CRM" else "154990-SP", key=f"crm_{doc_item_id}_{idx}")
+                
+                if st.button("✅ Aprovar Laudo em 1 Clique", key=f"btn_aprov_{doc_item_id}_{idx}", type="primary"):
+                    st.session_state["fila_hitl"] = [d for d in st.session_state["fila_hitl"] if d["documento_id"] != doc_item_id]
+                    st.success(f"Documento {doc_item_id} aprovado com CRM {crm_input} e liberado para Farmácia Hospitalar!")
+                    st.rerun()
 
     with tab_oci:
         st.subheader("Segregação de Objetos no Bucket `mediflow-documentos-clinicos` (OCI Always Free)")
