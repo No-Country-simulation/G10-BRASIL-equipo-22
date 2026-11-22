@@ -84,6 +84,9 @@ class DocumentoIngerido(BaseModel):
     sha256: str
     tamanho_bytes: int
     avisos: list[str] = Field(default_factory=list)
+    tokens_estimados: int = 0
+    tokens_economizados: int = 0
+    cache_hit: bool = False
 
     def para_contrato(self) -> dict:
         """A requisição no formato do README (seção 2.3). Documento só em imagem sai com texto None."""
@@ -131,6 +134,9 @@ def ingerir(origem: str | Path | bytes, *, nome_arquivo: str | None = None,
     sha256 = hashlib.sha256(dados).hexdigest()
     tipo = detectar_tipo(dados)
     avisos: list[str] = []
+    cache_hit = False
+    tokens_economizados = 0
+    tokens_estimados = 0
 
     if tipo == "json":
         entrada = _ler_json(dados)
@@ -138,20 +144,32 @@ def ingerir(origem: str | Path | bytes, *, nome_arquivo: str | None = None,
             avisos.append(f"documento_id do JSON ({entrada.documento_id}) mantido; o informado era {documento_id}")
         documento_id = entrada.documento_id
         canal_origem = entrada.canal_origem or canal_origem
-        paginas = [Pagina(numero=1, origem="camada_texto", texto=normalizar(entrada.documento_texto))]
+        texto_norm = normalizar(entrada.documento_texto)
+        paginas = [Pagina(numero=1, origem="camada_texto", texto=texto_norm)]
         tipo_arquivo: TipoArquivo = "TEXTO"
+        tokens_estimados = estimar_tokens_texto(texto_norm)
     elif tipo == "texto":
         texto = normalizar(dados.decode("utf-8-sig"))
         if not texto:
             raise EntradaInvalida("arquivo de texto sem conteúdo")
         paginas = [Pagina(numero=1, origem="camada_texto", texto=texto)]
         tipo_arquivo = "TEXTO"
+        tokens_estimados = estimar_tokens_texto(texto)
     elif tipo == "pdf":
-        paginas = _ler_pdf(dados, avisos)
+        if sha256 in _CACHE_PAGINAS_PDF:
+            cache_hit = True
+            _, tokens_economizados = _CACHE_PAGINAS_PDF[sha256]
+            tokens_estimados = tokens_economizados
+        paginas = _ler_pdf(dados, avisos, pdf_sha256=sha256)
+        if not cache_hit:
+            _, tokens_estimados = _CACHE_PAGINAS_PDF.get(sha256, ([], 0))
         tipo_arquivo = "PDF"
     else:
         paginas = _ler_imagem(dados, avisos)
         tipo_arquivo = "IMAGEM"
+        tokens_estimados = sum(
+            estimar_tokens_imagem(p.largura or 1000, p.altura or 1000) for p in paginas
+        )
 
     for pagina in paginas:
         avisos += _avisos_de_qualidade(pagina)
@@ -176,6 +194,9 @@ def ingerir(origem: str | Path | bytes, *, nome_arquivo: str | None = None,
         sha256=sha256,
         tamanho_bytes=len(dados),
         avisos=avisos,
+        tokens_estimados=tokens_estimados,
+        tokens_economizados=tokens_economizados,
+        cache_hit=cache_hit,
     )
 
 
@@ -232,7 +253,44 @@ def _ler_json(dados: bytes) -> _EntradaJson:
         raise EntradaInvalida(f"JSON fora do contrato de entrada (problema em: {campos})") from None
 
 
-def _ler_pdf(dados: bytes, avisos: list[str]) -> list[Pagina]:
+# Cache global de páginas e estimativa de tokens para PDFs ingeridos (CARD-16)
+_CACHE_PAGINAS_PDF: dict[str, tuple[list[Pagina], int]] = {}
+
+
+def limpar_cache_tokens_pdf() -> None:
+    """Limpa o cache em memória de páginas e tokens de PDF."""
+    _CACHE_PAGINAS_PDF.clear()
+
+
+def estimar_tokens_texto(texto: str) -> int:
+    """Estima tokens para texto (aproximadamente 1 token a cada 4 caracteres)."""
+    return max(1, len(texto) // 4) if texto else 0
+
+
+def estimar_tokens_imagem(largura: int, altura: int) -> int:
+    """Estima tokens de visão multimodal para imagem renderizada (~258 tokens por patch)."""
+    patches = max(1, (largura // 512 + 1) * (altura // 512 + 1))
+    return patches * 258
+
+
+def converter_pdf_para_imagens_base64(dados: bytes, lado_maximo: int = LADO_MAXIMO) -> list[str]:
+    """Converte páginas de PDF para lista de strings Base64 prontas para visão multimodal (CARD-16)."""
+    sha = hashlib.sha256(dados).hexdigest()
+    avisos: list[str] = []
+    paginas = _ler_pdf(dados, avisos, pdf_sha256=sha)
+    imagens = []
+    for p in paginas:
+        if p.imagem_base64:
+            imagens.append(p.imagem_base64)
+    return imagens
+
+
+def _ler_pdf(dados: bytes, avisos: list[str], pdf_sha256: str | None = None) -> list[Pagina]:
+    sha = pdf_sha256 or hashlib.sha256(dados).hexdigest()
+    if sha in _CACHE_PAGINAS_PDF:
+        paginas_cache, _ = _CACHE_PAGINAS_PDF[sha]
+        return [p.model_copy() for p in paginas_cache]
+
     try:
         pdf = pdfium.PdfDocument(dados)
     except pdfium.PdfiumError as erro:
@@ -244,15 +302,21 @@ def _ler_pdf(dados: bytes, avisos: list[str]) -> list[Pagina]:
         if total > MAX_PAGINAS:
             avisos.append(f"PDF com {total} páginas; só as {MAX_PAGINAS} primeiras foram lidas")
         paginas = []
+        tokens_totais = 0
         for indice in range(min(total, MAX_PAGINAS)):
             pagina = pdf[indice]
             texto = normalizar(pagina.get_textpage().get_text_range())
             if len(re.sub(r"\s", "", texto)) >= MIN_CARACTERES_PAGINA:
                 paginas.append(Pagina(numero=indice + 1, origem="camada_texto", texto=texto))
+                tokens_totais += estimar_tokens_texto(texto)
             else:
                 largura, altura = pagina.get_size()
                 imagem = pagina.render(scale=LADO_MAXIMO / max(largura, altura)).to_pil()
-                paginas.append(_pagina_de_imagem(indice + 1, imagem, "pdf_renderizado"))
+                pag_img = _pagina_de_imagem(indice + 1, imagem, "pdf_renderizado")
+                paginas.append(pag_img)
+                tokens_totais += estimar_tokens_imagem(pag_img.largura or 1000, pag_img.altura or 1000)
+
+        _CACHE_PAGINAS_PDF[sha] = ([p.model_copy() for p in paginas], tokens_totais)
         return paginas
     finally:
         pdf.close()
