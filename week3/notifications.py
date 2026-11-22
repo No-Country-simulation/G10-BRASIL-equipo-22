@@ -22,6 +22,124 @@ logger = logging.getLogger("mediflow.notifications")
 # Erros em que vale tentar de novo; 4xx de URL ou token errado não melhora com nova tentativa
 STATUS_HTTP_TRANSITORIOS = {408, 425, 429, 500, 502, 503, 504}
 
+DADOS_HOSPITALARES_PADRAO = {
+    "unidade": "Hospital Central de Trauma & Emergência",
+    "cnpj": "45.123.789/0001-10",
+    "setor_plantao": "UTI / Emergência Médica",
+    "ramal_urgencia": "4001",
+    "telefone_plantao": "+55 11 3123-4567",
+}
+
+
+def formatar_slack_blocks(
+    documento_id: str,
+    paciente: str,
+    diagnostico: str,
+    crm: str,
+    link_seguro: str,
+    dados_hosp: Dict[str, Any],
+) -> List[Dict[str, Any]]:
+    """Gera blocos Block Kit ricos para Slack com botão de ação direta e dados do hospital (CARD-17)."""
+    return [
+        {
+            "type": "header",
+            "text": {
+                "type": "plain_text",
+                "text": "🚨 ALERTA CRÍTICO: PLANTÃO MÉDICO ACIONADO",
+                "emoji": True,
+            },
+        },
+        {
+            "type": "section",
+            "fields": [
+                {"type": "mrkdwn", "text": f"*Documento:* `{documento_id}`"},
+                {"type": "mrkdwn", "text": f"*Prioridade:* `🔴 URGENTE / STAT`"},
+                {"type": "mrkdwn", "text": f"*Paciente:* {paciente}"},
+                {"type": "mrkdwn", "text": f"*CRM Solicitante:* {crm}"},
+            ],
+        },
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": f"*Achado Crítico / Diagnóstico:*\n> *{diagnostico}*\nUnidade: _{dados_hosp.get('unidade', '')}_ | Ramal: `{dados_hosp.get('ramal_urgencia', '')}`",
+            },
+        },
+        {
+            "type": "actions",
+            "elements": [
+                {
+                    "type": "button",
+                    "text": {"type": "plain_text", "text": "📋 Acessar Laudo Seguro"},
+                    "url": link_seguro,
+                    "style": "danger",
+                }
+            ],
+        },
+    ]
+
+
+def formatar_discord_embeds(
+    documento_id: str,
+    paciente: str,
+    diagnostico: str,
+    crm: str,
+    link_seguro: str,
+    dados_hosp: Dict[str, Any],
+) -> List[Dict[str, Any]]:
+    """Gera embeds para canais Discord de emergência médica (CARD-17)."""
+    return [
+        {
+            "title": f"🚨 Alerta de Urgência Hospitalar — {documento_id}",
+            "description": f"**Quadro Clínico Crítico Identificado:**\n{diagnostico}",
+            "url": link_seguro,
+            "color": 16711680,  # Vermelho Alerta
+            "fields": [
+                {"name": "Paciente", "value": paciente, "inline": True},
+                {"name": "Médico / CRM", "value": crm, "inline": True},
+                {"name": "Unidade", "value": dados_hosp.get("unidade", "Pronto Socorro"), "inline": False},
+                {"name": "Contato de Plantão", "value": f"Ramal {dados_hosp.get('ramal_urgencia')} | Tel: {dados_hosp.get('telefone_plantao')}", "inline": False},
+            ],
+            "footer": {"text": "MediFlow SRE / IA LangGraph — Encaminhamento imediato"},
+            "timestamp": datetime.datetime.now().isoformat(),
+        }
+    ]
+
+
+def formatar_erp_clinico_hl7(
+    documento_id: str,
+    paciente: str,
+    diagnostico: str,
+    crm: str,
+    link_seguro: str,
+    dados_hosp: Dict[str, Any],
+) -> Dict[str, Any]:
+    """Gera payload compatível com FHIR/HL7 CommunicationRequest para ERPs clínicos (CARD-17)."""
+    return {
+        "resourceType": "CommunicationRequest",
+        "status": "active",
+        "priority": "stat",
+        "category": [
+            {
+                "coding": [
+                    {
+                        "system": "http://terminology.hl7.org/CodeSystem/communication-category",
+                        "code": "alert",
+                        "display": "Emergency Clinical Alert",
+                    }
+                ]
+            }
+        ],
+        "identifier": [{"system": "urn:mediflow:documents", "value": documento_id}],
+        "subject": {"display": paciente},
+        "requester": {"display": f"CRM {crm}"},
+        "payload": [
+            {"contentString": diagnostico},
+            {"contentAttachment": {"url": link_seguro, "title": "Prontuário Seguro"}},
+        ],
+        "sender": {"display": dados_hosp.get("unidade")},
+    }
+
 
 @dataclass
 class AlertaClinicoRegistro:
@@ -87,18 +205,25 @@ class NotificationDispatcher:
         crm_solicitante: Optional[str],
         canal: str = "Alerta_Plantao_Medico",
         mensagem_customizada: Optional[str] = None,
+        dados_hospitalares: Optional[Dict[str, Any]] = None,
     ) -> Dict[str, Any]:
         """
-        Dispara um alerta crítico de urgência médica para a equipe de plantão.
+        Dispara um alerta crítico de urgência médica para a equipe de plantão (CARD-17).
         """
         paciente = paciente_nome or "Paciente Não Identificado"
         diag = diagnostico or "Condição Crítica Aguda"
         crm = crm_solicitante or "CRM Não Especificado"
 
+        dados_hosp = dados_hospitalares or DADOS_HOSPITALARES_PADRAO
+        token_seguro = uuid.uuid4().hex
+        link_seguro = f"https://mediflow.hospital.internal/urgencias/{documento_id}?token={token_seguro}&exp=7200"
+
         mensagem = mensagem_customizada or (
             f"🚨 ALERTA CRÍTICO DE PLANTÃO MÉDICO | Doc: {documento_id}\n"
             f"Paciente: {paciente} | Diagnóstico: {diag}\n"
-            f"Médico Solicitante: {crm} | Encaminhado imediatamente para Fila_Emergencia_Medica."
+            f"Médico Solicitante: {crm} | Encaminhado imediatamente para Fila_Emergencia_Medica.\n"
+            f"Unidade: {dados_hosp.get('unidade')} | Ramal: {dados_hosp.get('ramal_urgencia')}\n"
+            f"Link Seguro: {link_seguro}"
         )
 
         payload = {
@@ -110,6 +235,11 @@ class NotificationDispatcher:
             "crm_medico": crm,
             "canal_destino": canal,
             "mensagem": mensagem,
+            "link_seguro": link_seguro,
+            "dados_hospitalares": dados_hosp,
+            "slack_blocks": formatar_slack_blocks(documento_id, paciente, diag, crm, link_seguro, dados_hosp),
+            "discord_embeds": formatar_discord_embeds(documento_id, paciente, diag, crm, link_seguro, dados_hosp),
+            "erp_clinico_payload": formatar_erp_clinico_hl7(documento_id, paciente, diag, crm, link_seguro, dados_hosp),
             "timestamp": datetime.datetime.now().isoformat(),
             "origem": "MediFlow Agent LangGraph StateGraph (Release 1.3)",
         }
