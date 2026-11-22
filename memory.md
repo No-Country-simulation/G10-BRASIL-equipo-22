@@ -278,6 +278,17 @@ MediFlow is an intelligent autonomous agent that:
   - Documented release in [`week4/README.md`](file:///home/magno/ONE/week4/README.md).
 - **Status:** Week 4 SRE, CI/CD, and Concurrency Load deliverables completed and validated.
 
+### [2026-11-22] — Sprint M6 / CARD-39: Auditoria de Segurança de Credenciais & Blindagem Git — PR #72 Merged na Main
+- **Author:** Carlos Magno (Tech Lead & SRE/DevOps) / Pair Programming Assistant
+- **Actions Completed:**
+  - Atualizou o `.gitignore` para cobrir de forma estrita arquivos de chave, certificados, `secrets.json`, `.oci/` e variáveis `.env`.
+  - Elaborou o documento de governança [`SECURITY.md`](file:///home/magno/ONE/SECURITY.md) detalhando arquitetura Zero Trust, políticas de menor privilégio no OCI, anonimização LGPD e procedimento de divulgação responsável de vulnerabilidades.
+  - Implementou a suíte de testes de segurança em [`tests/test_security_audit.py`](file:///home/magno/ONE/tests/test_security_audit.py) com 3 verificações automáticas contra vazamento de credenciais ativas (OpenAI, Gemini, NVIDIA NIM, chaves privadas PEM).
+  - Total de testes aprovados: **172 testes (100% de sucesso)**.
+  - Branch `feat/auditoria-seguranca-credenciais` → PR #72 aberto e mesclado na `main`.
+  - Issue #48 (CARD-39) fechada automaticamente.
+- **Status:** CARD-39 100% entregue e homologado.
+
 ### [2026-11-22] — Sprint M6 / CARD-37: Freeze de Código & Cobertura pytest >= 90% — PR #71 Merged na Main
 - **Author:** Carlos Magno (Tech Lead & SRE/DevOps) / Pair Programming Assistant
 - **Actions Completed:**
