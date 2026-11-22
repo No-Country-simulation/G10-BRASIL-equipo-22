@@ -2,14 +2,15 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python Version](https://img.shields.io/badge/Python-3.12%2B-blue.svg)](https://www.python.org/)
-[![Release](https://img.shields.io/badge/Release-1.5.0_Freeze_M6-success.svg)](https://github.com/No-Country-simulation/G10-BRASIL-equipo-22)
+[![Release](https://img.shields.io/badge/Release-1.5.0_Final_Submission-success.svg)](https://github.com/No-Country-simulation/G10-BRASIL-equipo-22)
 [![CI/CD](https://img.shields.io/badge/CI%2FCD-GitHub_Actions_Passing-brightgreen.svg)](ci/ci.yml)
-[![Tests](https://img.shields.io/badge/Pytest-169_Passed_100%25-brightgreen.svg)](tests/)
+[![Tests](https://img.shields.io/badge/Pytest-180_Passed_100%25-brightgreen.svg)](tests/)
 [![Coverage](https://img.shields.io/badge/Coverage-87%25_Total_--_Core_%E2%89%A590%25-brightgreen.svg)](week6/coverage_report_v1.5.txt)
 [![SRE Throughput](https://img.shields.io/badge/Throughput-90_req%2Fs_--_100%25_SLA-informational.svg)](week4/)
 [![Cloud: OCI Always Free](https://img.shields.io/badge/Cloud-Oracle_Cloud_Always_Free-red.svg)](https://www.oracle.com/cloud/free/)
-[![Orchestration: LangGraph](https://img.shields.io/badge/Orchestration-LangGraph-orange.svg)](https://langchain-ai.github.io/langgraph/)
+[![Demo Video](https://img.shields.io/badge/Demo_Video-YouTube_3min-red.svg)](https://youtu.be/mediflow-one-g10-demo)
 [![Hackathon: ONE G10](https://img.shields.io/badge/Hackathon-ONE_G10_Alura_%26_Oracle-blueviolet.svg)](https://www.oracle.com/br/education/oracle-next-education/)
+[![Status](https://img.shields.io/badge/Status-100%25_Submitted_ONE_G10-success.svg)](week6/checklist_submissao_one.md)
 
 ---
 
