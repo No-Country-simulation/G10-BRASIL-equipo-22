@@ -2,9 +2,10 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python Version](https://img.shields.io/badge/Python-3.12%2B-blue.svg)](https://www.python.org/)
-[![Release](https://img.shields.io/badge/Release-1.5_Sprint_M5-success.svg)](https://github.com/No-Country-simulation/G10-BRASIL-equipo-22)
+[![Release](https://img.shields.io/badge/Release-1.5.0_Freeze_M6-success.svg)](https://github.com/No-Country-simulation/G10-BRASIL-equipo-22)
 [![CI/CD](https://img.shields.io/badge/CI%2FCD-GitHub_Actions_Passing-brightgreen.svg)](ci/ci.yml)
-[![Tests](https://img.shields.io/badge/Pytest-125_Passed_100%25-brightgreen.svg)](tests/)
+[![Tests](https://img.shields.io/badge/Pytest-169_Passed_100%25-brightgreen.svg)](tests/)
+[![Coverage](https://img.shields.io/badge/Coverage-87%25_Total_--_Core_%E2%89%A590%25-brightgreen.svg)](week6/coverage_report_v1.5.txt)
 [![SRE Throughput](https://img.shields.io/badge/Throughput-90_req%2Fs_--_100%25_SLA-informational.svg)](week4/)
 [![Cloud: OCI Always Free](https://img.shields.io/badge/Cloud-Oracle_Cloud_Always_Free-red.svg)](https://www.oracle.com/cloud/free/)
 [![Orchestration: LangGraph](https://img.shields.io/badge/Orchestration-LangGraph-orange.svg)](https://langchain-ai.github.io/langgraph/)
@@ -59,6 +60,7 @@ Manual processing causes severe operational bottlenecks, transcription errors, g
 9. **SRE Circuit-Breaker Engine (`mediflow_circuit_breaker.py`)**: Canonical CLOSED / OPEN / HALF_OPEN state machine with configurable failure threshold, cooldown window, and automatic fallback to in-process LangGraph when the backend REST API is degraded — Zero Downtime by design. *(CARD-25 / PR #62 — 10/11/2026)*
 10. **Inference Latency Optimization & Fast-Path Engine (`mediflow_fast_path.py`)**: Sub-millisecond deterministic heuristic pattern matcher (< 50ms) for structured clinical documents and compact LLM prompt (< 300 tokens) with bounded token generation, guaranteeing average triage latency strictly $< 3.0\text{s}$ (98% speedup). *(CARD-26 / PR #63 — 11/11/2026)*
 11. **Chaos Testing & SRE Fault Injection Matrix (`tests/chaos_injector.py`, `tests/test_chaos_testing.py`)**: End-to-end chaos engineering framework validating 4 production failure vectors (LLM 500/503, network timeout > 5s, OCI storage downtime, emergency webhook failure), guaranteeing 100% Zero Downtime without unhandled exceptions. *(CARD-27 / PR #64 — 11/11/2026)*
+12. **Freeze & Code Coverage Battery (`week6/coverage_report_v1.5.txt`)**: 169-test automated battery covering all multimodal ingestion, SRE fallback, OCI cloud storage, HitL triage workflows, and reverse auditing, achieving $\ge 90\%$ code coverage across all core critical modules (`notifications.py`: 100%, `mediflow_schemas.py`: 97%, `api.py`: 96%, `ingestao.py`: 93%, `app.py`: 92%, `circuit_breaker.py`: 91%, `fast_path.py`: 90%). *(CARD-37 / PR #71 — 22/11/2026)*
 
 ---
 
@@ -140,10 +142,13 @@ source .venv/bin/activate
 pip install -r requirements.txt -r requirements-ingestao.txt
 ```
 
-#### Run Automated Test Suite (125 Tests)
+#### Run Automated Test Suite (169 Tests)
 ```bash
 # Run all automated tests via pytest
 pytest
+
+# Run with full coverage report:
+pytest --cov=. --cov-config=.coveragerc tests/ week3/ week4/
 
 # Or execute individual sprint test runners with executive banners:
 python week3/run_tests.py
@@ -192,6 +197,7 @@ O **MediFlow** é um agente autônomo e inteligente para ingestão, classificaç
 9. **Motor de Circuit-Breaker SRE (`mediflow_circuit_breaker.py`)**: Máquina de estados canônica CLOSED / OPEN / HALF_OPEN com limiar de falhas configurável, janela de arrefecimento e chaveamento automático para o motor LangGraph in-process quando a API backend estiver degradada — Zero Downtime por design. *(CARD-25 / PR #62 — 10/11/2026)*
 10. **Otimização de Latência & Fast-Path Heurístico (`mediflow_fast_path.py`)**: Motor determinístico com autômatos regex em tempo submilisegundo (< 50ms) para documentos estruturados e prompt de LLM compacto (< 300 tokens), garantindo latência média estritamente $< 3.0\text{s}$ (ganho de 98% de velocidade). *(CARD-26 / PR #63 — 11/11/2026)*
 11. **Matriz de Chaos Testing & Injeção de Falhas SRE (`tests/chaos_injector.py`, `tests/test_chaos_testing.py`)**: Framework de engenharia de caos validando 4 vetores de falha simultâneos (queda de LLM 500/503, timeout de rede > 5s, indisponibilidade OCI Storage e queda de Webhook), comprovando Zero Downtime absoluto e zero exceções não tratadas. *(CARD-27 / PR #64 — 11/11/2026)*
+12. **Freeze & Bateria de Cobertura de Testes (`week6/coverage_report_v1.5.txt`)**: Bateria automatizada de 169 testes cobrindo ingestão multimodal, fallback SRE, nuvem OCI, triagem HitL e auditoria reversa, atingindo $\ge 90\%$ de cobertura em todos os módulos críticos centrais (`notifications.py`: 100%, `mediflow_schemas.py`: 97%, `api.py`: 96%, `mediflow_ingestao.py`: 93%, `app.py`: 92%, `circuit_breaker.py`: 91%, `fast_path.py`: 90%). *(CARD-37 / PR #71 — 22/11/2026)*
 
 ---
 
@@ -233,6 +239,7 @@ El procesamiento manual de estos documentos genera cuellos de botella operativos
 8. **Motor de Circuit-Breaker SRE (`mediflow_circuit_breaker.py`)**: Máquina de estados canónica CLOSED / OPEN / HALF_OPEN con umbral de fallos configurable, ventana de enfriamiento y conmutación automática al motor LangGraph in-process ante degradación de la API backend — Zero Downtime por diseño. *(CARD-25 / PR #62 — 10/11/2026)*
 9. **Optimización de Latencia & Motor Fast-Path (`mediflow_fast_path.py`)**: Motor heurístico determinístico submilisegundo (< 50ms) para documentos estructurados y prompt compacto de LLM (< 300 tokens), garantizando latencia promedio estrictamente $< 3.0\text{s}$ (aceleración del 98%). *(CARD-26 / PR #63 — 11/11/2026)*
 10. **Matriz de Chaos Testing & Inyección de Fallos SRE (`tests/chaos_injector.py`, `tests/test_chaos_testing.py`)**: Framework de ingeniería del caos que valida 4 vectores de fallo de producción (caída de LLM 500/503, timeout de red > 5s, indisponibilidad OCI Storage y fallo de Webhook), garantizando Zero Downtime absoluto y cero excepciones no controladas. *(CARD-27 / PR #64 — 11/11/2026)*
+11. **Freeze & Batería de Cobertura de Pruebas (`week6/coverage_report_v1.5.txt`)**: Batería automatizada de 169 pruebas con cobertura $\ge 90\%$ en módulos centrales críticos. *(CARD-37 / PR #71 — 22/11/2026)*
 
 ---
 

@@ -2,8 +2,8 @@
 **Project:** MediFlow — Agente Autônomo para Triagem, Extração e Roteamento de Documentos Clínicos  
 **Initiative:** Hackathon ONE G10 — Oracle Next Education & Alura  
 **Team / Squad:** Equipo 22  
-**Current Milestone:** Release 1.5 — Sprint M5 (CARD-25 Entregue, 102 Testes, Circuit-Breaker SRE)  
-**Last Updated:** 2026-11-10  
+**Current Milestone:** Release 1.5.0 Freeze — Sprint M6 (CARD-37 Entregue, 169 Testes, Cobertura Core >= 90%)  
+**Last Updated:** 2026-11-22  
 
 ---
 
@@ -277,6 +277,16 @@ MediFlow is an intelligent autonomous agent that:
   - Built comprehensive 8-test suite in [`week4/test_week4.py`](file:///home/magno/ONE/week4/test_week4.py) (100% pass rate in 1.47s) and standalone CLI runner [`week4/run_week4_tests.py`](file:///home/magno/ONE/week4/run_week4_tests.py).
   - Documented release in [`week4/README.md`](file:///home/magno/ONE/week4/README.md).
 - **Status:** Week 4 SRE, CI/CD, and Concurrency Load deliverables completed and validated.
+
+### [2026-11-22] — Sprint M6 / CARD-37: Freeze de Código & Cobertura pytest >= 90% — PR #71 Merged na Main
+- **Author:** Carlos Magno (Tech Lead & SRE/DevOps) / Pair Programming Assistant
+- **Actions Completed:**
+  - Instalou e configurou ferramenta de cobertura `pytest-cov` com `.coveragerc` auditável omitindo fixtures e código legado.
+  - Criou suíte de cobertura complementar em `tests/test_cobertura_complementar.py` cobrindo fluxos de redirecionamento FastAPI, aprovação HitL, fallback de erro de inferência NIM, resolução de caminhos OCI e exportação legacy.
+  - Expandiu o total de testes automatizados para **169 testes (100% de sucesso)** em 17s.
+  - Relatório gerado em `week6/coverage_report_v1.5.txt` atestando: `week3/notifications.py`: 100%, `mediflow_schemas.py`: 97%, `week3/api.py`: 96%, `week5_ui_helpers.py`: 96%, `mediflow_ingestao.py`: 93%, `app.py`: 92%, `mediflow_circuit_breaker.py`: 91%, `mediflow_fast_path.py`: 90%, total consolidado de 87% do projeto.
+  - Criou tag imutável `v1.5.0-freeze` e atualizou documentação (`README.md`, `memory.md`).
+- **Status:** CARD-37 100% entregue e homologado. Tag `v1.5.0-freeze` criada.
 
 ### [2026-11-04] — Sprint M3 Closure: 14/14 Cards Homologados no GitHub
 - **Author:** Carlos Magno (Tech Lead & SRE) / Pair Programming Assistant

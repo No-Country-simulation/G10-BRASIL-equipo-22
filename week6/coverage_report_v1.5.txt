@@ -1,0 +1,54 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.1.1, pluggy-1.7.0
+rootdir: /home/magno/ONE
+configfile: pytest.ini
+testpaths: tests, week3, week4
+plugins: langsmith-0.14.12, cov-7.1.0, anyio-4.15.1
+collected 169 items
+
+tests/test_chaos_testing.py .........                                    [  5%]
+tests/test_circuit_breaker.py ...........                                [ 11%]
+tests/test_cobertura_complementar.py ........                            [ 16%]
+tests/test_ingestao.py .............................................     [ 43%]
+tests/test_m4_fastapi_e2e.py ......                                      [ 46%]
+tests/test_m4_oci.py .......                                             [ 50%]
+tests/test_m4_webhook_ui.py .......                                      [ 55%]
+tests/test_m5_auditoria_reversa.py ....                                  [ 57%]
+tests/test_m5_exportacao.py .....                                        [ 60%]
+tests/test_m5_streamlit.py .......                                       [ 64%]
+tests/test_otimizacao_latencia.py ..............                         [ 72%]
+week3/test_alertas_plantao.py ...........                                [ 79%]
+week3/test_ingestao_grafo.py ......                                      [ 82%]
+week3/test_ui_alertas.py ......                                          [ 86%]
+week3/test_urgencia.py .......                                           [ 90%]
+week3/test_week3.py ........                                             [ 95%]
+week4/test_week4.py ........                                             [100%]
+
+================================ tests coverage ================================
+_______________ coverage: platform linux, python 3.12.3-final-0 ________________
+
+Name                               Stmts   Miss Branch BrPart  Cover   Missing
+------------------------------------------------------------------------------
+app.py                               115     10     16      1    92%   62, 90-91, 117, 236-237, 247-248, 476-477
+mediflow_agent.py                    260     41     72     17    80%   113, 135->175, 143-144, 160-174, 269->277, 271->273, 274, 286-292, 298, 320-321, 326-330, 332->341, 337, 339, 370-371, 374-375, 384->387, 439-444
+mediflow_circuit_breaker.py          159      9     28      5    91%   84->88, 106->exit, 148->152, 234-239, 287, 317-319
+mediflow_fast_path.py                136     10     62     10    90%   129->131, 134-135, 142->146, 144->146, 153, 181-182, 184-185, 206, 208, 210, 217->229
+mediflow_ingestao.py                 243     16     62      5    93%   72, 144, 283->282, 301, 331-332, 335, 368-377
+mediflow_schemas.py                  101      2      8      1    97%   26-27
+oci_storage.py                       137     29     32      5    75%   52-59, 87-98, 132-133, 151, 198-217, 221->233
+week3/__init__.py                      1      0      0      0   100%
+week3/agent.py                       341     37     72     15    85%   63, 140, 168-169, 173-184, 309-313, 319-322, 327, 332, 342-343, 345-346, 350-354, 356->363, 359, 361
+week3/api.py                          66      2      4      1    96%   711, 803
+week3/notifications.py               124      0     22      0   100%
+week3/storage.py                     123     25     22      5    78%   53-60, 89-90, 137-148, 207-208, 228, 235-237, 250-252, 264->270, 266->265
+week3/ui_alertas.py                   59     15     16      1    76%   80-91, 134, 165-205
+week4/__init__.py                      3      0      0      0   100%
+week4/load_testing.py                 71      5      8      2    91%   52, 150-152, 168
+week4/telemetry_sre.py                84     10     20      5    84%   57, 88, 113, 117-120, 169, 182-184
+week5/auditoria_orcamento_oci.py      21      0      2      0   100%
+week5/exportacao.py                   57      8     12      4    83%   23, 33, 66-74, 114
+week5/uat_20_laudos.py                57     12     10      3    75%   17, 65, 69, 106-146
+week5_ui_helpers.py                   34      1     16      1    96%   72
+------------------------------------------------------------------------------
+TOTAL                               2192    232    484     81    87%
+============================= 169 passed in 17.24s =============================
