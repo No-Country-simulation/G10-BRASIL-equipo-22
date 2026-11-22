@@ -11,9 +11,10 @@ Personas:
 from __future__ import annotations
 
 import json
+import re
 from enum import Enum
 from typing import Any, Dict, Optional
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 
 class _CompatBaseModel(BaseModel):
@@ -114,6 +115,36 @@ class DadosMedicoSolicitante(_CompatBaseModel):
     crm: Optional[str] = Field(default=None, description="Registro CRM com UF (ex.: 145892-SP)")
 
 
+class GuiaAutorizacaoTISS(_CompatBaseModel):
+    """Contrato de autorização e conformidade hospitalar com padrões ANS TISS/TUSS (CARD-23 / #32)."""
+
+    numero_guia_prestador: str = Field(..., description="Número identificador da guia gerada pelo prestador")
+    registro_ans: str = Field(..., description="Registro de 6 dígitos da operadora de saúde na ANS")
+    numero_carteira_beneficiario: str = Field(..., description="Número da carteirinha do beneficiário")
+    nome_beneficiario: str = Field(..., description="Nome do paciente / beneficiário")
+    codigo_tuss_procedimento: str = Field(..., description="Código TUSS do procedimento (8 dígitos numéricos)")
+    descricao_procedimento: str = Field(..., description="Descrição padronizada do procedimento médico")
+    carater_atendimento: str = Field(default="Eletivo", description="Eletivo ou Urgencia_Emergencia")
+    cid10_principal: Optional[str] = Field(default=None, description="Classificação Estatística Internacional de Doenças")
+    crm_solicitante: str = Field(..., description="CRM e UF do médico solicitante (ex.: 12345-SP)")
+
+    @field_validator("registro_ans")
+    @classmethod
+    def validar_registro_ans(cls, v: str) -> str:
+        v_limpo = re.sub(r"\D", "", v)
+        if len(v_limpo) != 6:
+            raise ValueError(f"Registro ANS inválido: deve conter 6 dígitos numéricos (recebido: {v})")
+        return v_limpo
+
+    @field_validator("codigo_tuss_procedimento")
+    @classmethod
+    def validar_codigo_tuss(cls, v: str) -> str:
+        v_limpo = re.sub(r"\D", "", v)
+        if len(v_limpo) != 8:
+            raise ValueError(f"Código TUSS inválido: deve conter 8 dígitos numéricos (recebido: {v})")
+        return v_limpo
+
+
 class DadosExtraidos(_CompatBaseModel):
     """Entidades clínicas estruturadas extraídas pelo motor LLM multimodal."""
 
@@ -134,6 +165,10 @@ class DadosExtraidos(_CompatBaseModel):
     medicamentos_prescritos: Optional[list[str]] = Field(
         default=None,
         description="Lista de medicamentos e posologias quando aplicável",
+    )
+    guia_tiss: Optional[GuiaAutorizacaoTISS] = Field(
+        default=None,
+        description="Dados de conformidade TISS/TUSS para guias de autorização médica",
     )
 
 
