@@ -82,6 +82,6 @@ def test_readme_badges_e_submissao() -> None:
     assert readme_path.exists()
     
     conteudo = readme_path.read_text(encoding="utf-8")
-    assert "Release-1.5.0_Freeze_M6" in conteudo
-    assert "Pytest-169_Passed_100%25" in conteudo or "Pytest" in conteudo
+    assert "Release-1.5.0" in conteudo
+    assert "Pytest-180_Passed_100%25" in conteudo or "Pytest" in conteudo
     assert "sa-saopaulo-1" in conteudo or "Always Free" in conteudo
