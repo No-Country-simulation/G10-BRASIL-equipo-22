@@ -11,7 +11,7 @@ Equipe:
 from __future__ import annotations
 
 import json
-from typing import Dict, List
+from typing import Any, Dict, List, Optional
 
 from mediflow_agent import (
     SCENARIO_1_ROUTINE,
@@ -55,7 +55,116 @@ try:
         resultado = _agent_instance.run(payload)
         if resultado.decisao_roteamento.requer_auditoria_humana:
             _audit_queue[resultado.documento_id] = resultado
+
+        # Persistência relacional auditável (OCI ATP / SQLite) (CARD-19/22)
+        try:
+            from oci_storage import OCIATPManager
+            atp = OCIATPManager()
+            atp.salvar_registro(
+                documento_id=resultado.documento_id,
+                tipo_documento=resultado.classificacao.tipo_documento,
+                crm_medico=resultado.dados_extraidos.medico_solicitante.crm,
+                paciente_nome=resultado.dados_extraidos.paciente.nome,
+                prioridade=resultado.classificacao.nivel_prioridade.value,
+                score_confianca=resultado.classificacao.score_confianca_classificacao,
+                requer_auditoria=resultado.decisao_roteamento.requer_auditoria_humana,
+                payload_json=resultado.to_dict(exclude_none=True),
+            )
+        except Exception:
+            pass
+
         return resultado
+
+    @api.get("/api/v1/documentos/{documento_id}")
+    def obter_documento_por_id(documento_id: str) -> dict:
+        """Busca detalhada de documento clínico por ID com metadados e payload (CARD-22 / #31)."""
+        if documento_id in _audit_queue:
+            doc_data = _audit_queue[documento_id].to_dict(exclude_none=True)
+            return {
+                "status": "em_auditoria",
+                "documento_id": documento_id,
+                "documento": doc_data,
+                "payload": doc_data,
+            }
+
+        import sqlite3
+        from oci_storage import OCIATPManager
+        atp = OCIATPManager()
+        with sqlite3.connect(atp.db_path) as conn:
+            conn.row_factory = sqlite3.Row
+            row = conn.execute(
+                "SELECT * FROM clinico_audit_historico WHERE documento_id = ?",
+                (documento_id,),
+            ).fetchone()
+            if row:
+                return {
+                    "status": "encontrado",
+                    "documento_id": row["documento_id"],
+                    "tipo_documento": row["tipo_documento"],
+                    "crm_medico": row["crm_medico"],
+                    "paciente_nome": row["paciente_nome"],
+                    "prioridade": row["prioridade"],
+                    "score_confianca": row["score_confianca"],
+                    "requer_auditoria": bool(row["requer_auditoria"]),
+                    "payload": json.loads(row["payload_json"]) if row["payload_json"] else {},
+                    "data_criacao": row["data_criacao"],
+                }
+
+        raise HTTPException(status_code=404, detail=f"Documento {documento_id} não encontrado.")
+
+    @api.get("/api/v1/historico")
+    def consultar_historico(
+        crm: Optional[str] = None,
+        prioridade: Optional[str] = None,
+        tipo_documento: Optional[str] = None,
+        page: int = 1,
+        limit: int = 20,
+    ) -> dict:
+        """Consulta histórica de documentos processados com filtros por CRM, prioridade e paginação (CARD-22 / #31)."""
+        import sqlite3
+        from oci_storage import OCIATPManager
+        atp = OCIATPManager()
+        with sqlite3.connect(atp.db_path) as conn:
+            conn.row_factory = sqlite3.Row
+            query = "SELECT * FROM clinico_audit_historico WHERE 1=1"
+            params: list[Any] = []
+            if crm:
+                query += " AND crm_medico = ?"
+                params.append(crm)
+            if prioridade:
+                query += " AND prioridade = ?"
+                params.append(prioridade)
+            if tipo_documento:
+                query += " AND tipo_documento = ?"
+                params.append(tipo_documento)
+
+            count_query = query.replace("SELECT *", "SELECT COUNT(*)")
+            total = conn.execute(count_query, params).fetchone()[0]
+
+            query += " ORDER BY data_criacao DESC LIMIT ? OFFSET ?"
+            offset = max(0, (page - 1) * limit)
+            params.extend([limit, offset])
+
+            rows = conn.execute(query, params).fetchall()
+            documentos = [
+                {
+                    "documento_id": r["documento_id"],
+                    "tipo_documento": r["tipo_documento"],
+                    "crm_medico": r["crm_medico"],
+                    "paciente_nome": r["paciente_nome"],
+                    "prioridade": r["prioridade"],
+                    "score_confianca": r["score_confianca"],
+                    "requer_auditoria": bool(r["requer_auditoria"]),
+                    "data_criacao": r["data_criacao"],
+                }
+                for r in rows
+            ]
+            return {
+                "total": total,
+                "page": page,
+                "limit": limit,
+                "documentos": documentos,
+            }
 
     @api.get("/api/v1/auditoria", response_model=List[ResultadoTriagemOutput])
     def listar_fila_auditoria_humana() -> List[ResultadoTriagemOutput]:
