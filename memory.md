@@ -2,7 +2,7 @@
 **Project:** MediFlow — Agente Autônomo para Triagem, Extração e Roteamento de Documentos Clínicos  
 **Initiative:** Hackathon ONE G10 — Oracle Next Education & Alura  
 **Team / Squad:** Equipo 22  
-**Current Milestone:** Release 1.5.0 Freeze — Sprint M6 (CARD-37 Entregue, 169 Testes, Cobertura Core >= 90%)  
+**Current Milestone:** Release 1.5.0 Final — Submissão Oficial Hackathon ONE G10 Concluída (180 Testes, 100% dos 48 Cards Fechados)  
 **Last Updated:** 2026-11-22  
 
 ---
@@ -277,6 +277,20 @@ MediFlow is an intelligent autonomous agent that:
   - Built comprehensive 8-test suite in [`week4/test_week4.py`](file:///home/magno/ONE/week4/test_week4.py) (100% pass rate in 1.47s) and standalone CLI runner [`week4/run_week4_tests.py`](file:///home/magno/ONE/week4/run_week4_tests.py).
   - Documented release in [`week4/README.md`](file:///home/magno/ONE/week4/README.md).
 - **Status:** Week 4 SRE, CI/CD, and Concurrency Load deliverables completed and validated.
+
+### [2026-11-22] — Sprint M6 / CARDs 43-48: OCI Snapshot, Relatório e Submissão Final ONE — PR #75 Merged na Main
+- **Author:** Carlos Magno (Tech Lead & SRE) / Helder Costa Amaral / Alessandro / Fernando Szekut
+- **Actions Completed:**
+  - Consolidou as evidências de layout de buckets OCI Always Free em [`week6/demo_oci_buckets.md`](file:///home/magno/ONE/week6/demo_oci_buckets.md).
+  - Publicou o relatório executivo de conformidade da nuvem OCI em [`week6/relatorio_executivo_oci.md`](file:///home/magno/ONE/week6/relatorio_executivo_oci.md).
+  - Gerou o snapshot do banco SQLite de auditoria em [`week6/snapshot_db_avaliacao.sql`](file:///home/magno/ONE/week6/snapshot_db_avaliacao.sql) para avaliação direta pelos examinadores.
+  - Documentou o roteiro de introdução contextualizando o problema no SUS / Saúde Suplementar em [`week6/intro_video_contexto.md`](file:///home/magno/ONE/week6/intro_video_contexto.md).
+  - Validou 100% dos requisitos no checklist oficial em [`week6/checklist_submissao_one.md`](file:///home/magno/ONE/week6/checklist_submissao_one.md).
+  - Criou a suíte de testes de submissão em [`tests/test_submission_compliance.py`](file:///home/magno/ONE/tests/test_submission_compliance.py) (4 testes aprovados).
+  - Total consolidado: **180 testes automatizados (100% de sucesso)**.
+  - Branch `feat/m6-oci-snapshot-relatorio-submissao` → PR #75 aberto e mesclado na `main`.
+  - Fechou automaticamente os cards #52 (CARD-43), #53 (CARD-44), #54 (CARD-45), #55 (CARD-46), #56 (CARD-47) e #57 (CARD-48).
+- **Status:** 100% das 57 issues do repositório concluídas e fechadas. Submissão do Hackathon ONE G10 homologada com sucesso!
 
 ### [2026-11-22] — Sprint M6 / CARDs 40-42 & Macro #9: Roteiro, Metadados e Edição do Vídeo Demo — PR #74 Merged na Main
 - **Author:** Carlos Magno (Tech Lead) / Fernando Szekut / Pair Programming Assistant
