@@ -1,0 +1,18 @@
+[Unit]
+Description=MediFlow Autonomous Clinical Triage Service (Always Free OCI Compute)
+After=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/home/ubuntu/G10-BRASIL-equipo-22
+Environment="PATH=/home/ubuntu/G10-BRASIL-equipo-22/.venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin"
+EnvironmentFile=/home/ubuntu/G10-BRASIL-equipo-22/.env
+ExecStart=/home/ubuntu/G10-BRASIL-equipo-22/.venv/bin/uvicorn app:api --host 0.0.0.0 --port 8000 --workers 2
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
