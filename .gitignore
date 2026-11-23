@@ -21,6 +21,7 @@ secrets.json
 .venv/
 env/
 venv/
+.env
 
 # 3. Bancos de Dados Locais e Arquivos Temporários de Auditoria
 *.db
