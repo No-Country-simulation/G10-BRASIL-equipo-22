@@ -30,6 +30,10 @@
 | **Helder Costa Amaral** (`@HelderAmaralConsult`) | **Database & Cloud Storage (OCI)** | OCI Object Storage Always Free dynamic folder segregation (`/processados/{prioridade}/{especialidade}`), SQLite Transactional Audit, and Zero-Cost Quota Guardrails. |
 | **Alessandro / Leandro** (`@superjonic`) | **Backend FastAPI & QA** | FastAPI REST API inspection endpoints (`/api/v1/grafo/estrutura`, `/api/v1/telemetria`), automated Pytest test suites, and Agile Kanban governance. |
 
+> 🏛️ **Technical Leadership & Unified Review Governance Note:**  
+> During the final consolidation, stabilization, and formal submission phases (Sprints M4, M5, and M6), Tech Lead **Carlos Magno** (`@magnomct`) took direct technical ownership, end-to-end code review, and full homologation of the database/OCI cloud storage deliverables (Helder) and FastAPI backend/QA test suites (Alessandro), guaranteeing 100% card delivery, rigorous Zero-Leak security, and 180 automated tests passing without regressions.  
+> *(Na reta final de consolidação e submissão, o Tech Lead Carlos Magno assumiu a execução técnica direta, revisão e homologação unificada de todos os cards de OCI/Dados e FastAPI/QA, assegurando entrega integral dos 48 cards e 180 testes).*
+
 ---
 
 ## 🇺🇸 English Version (EN-US)
